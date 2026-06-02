@@ -221,7 +221,7 @@ function renderCombatants(rawEncounter, rawCombatants) {
   const combatants = mergePets(rawCombatants);
   const maxRows    = Config.get('maxRows') || Infinity;
 
-  let players = Object.values(combatants).filter(c => c.name && c.name !== 'YOU');
+  let players = Object.values(combatants).filter(c => !!c.name);
   players.sort((a, b) => sortKey(b) - sortKey(a));
   if (maxRows) players = players.slice(0, maxRows);
 

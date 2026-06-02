@@ -1,124 +1,122 @@
 /*
  * Quartzite skin for cactbot raidboss
- * Paste this into: OverlayPlugin → raidboss overlay → Custom CSS
- *
- * Designed to match the Quartzite DPS overlay aesthetic:
- * frosted glass, Apple system font, indigo accents, rounded corners.
+ * Paste into: Browsingway / OverlayPlugin → raidboss overlay → Custom CSS
  */
 
 /* ── Variables ───────────────────────────────────────────────────────── */
 :root {
-  --q-accent:       #6366f1;
-  --q-accent-soft:  rgba(99, 102, 241, 0.22);
-  --q-bg:           rgba(12, 12, 20, 0.82);
-  --q-surface:      rgba(255, 255, 255, 0.07);
-  --q-border:       rgba(255, 255, 255, 0.10);
-  --q-radius:       10px;
-  --q-font:         -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-                    'Helvetica Neue', 'Inter', system-ui, sans-serif;
+  --q-accent:      #6366f1;
+  --q-accent-dim:  rgba(99, 102, 241, 0.55);
+  --q-bg:          rgba(14, 14, 22, 0.88);
+  --q-surface:     rgba(255, 255, 255, 0.07);
+  --q-border:      rgba(255, 255, 255, 0.10);
+  --q-text:        rgba(255, 255, 255, 0.90);
+  --q-text-dim:    rgba(255, 255, 255, 0.50);
+  --q-radius:      10px;
+  --q-font:        -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+                   'Helvetica Neue', 'Inter', system-ui, sans-serif;
 
-  --q-info:         rgba(99, 241, 160, 0.95);
-  --q-alert:        rgba(251, 191, 36,  0.95);
-  --q-alarm:        rgba(251, 80,  80,  0.95);
+  --q-info-fg:     #6ee7a0;
+  --q-info-bg:     rgba(16, 50, 30, 0.92);
+  --q-info-border: rgba(110, 231, 160, 0.22);
+
+  --q-alert-fg:    #fbbf24;
+  --q-alert-bg:    rgba(50, 35, 8, 0.92);
+  --q-alert-border:rgba(251, 191, 36, 0.25);
+
+  --q-alarm-fg:    #f87171;
+  --q-alarm-bg:    rgba(50, 10, 10, 0.95);
+  --q-alarm-border:rgba(248, 113, 113, 0.30);
 
   --transition-time: 400ms;
 }
 
-/* ── Global reset ────────────────────────────────────────────────────── */
-* {
-  font-family: var(--q-font) !important;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
-}
-
-body {
-  background: transparent !important;
-  margin: 0;
-}
+/* ── Global ──────────────────────────────────────────────────────────── */
+* { font-family: var(--q-font) !important; box-sizing: border-box; }
+body { background: transparent !important; margin: 0; }
 
 /* ── Timeline container ──────────────────────────────────────────────── */
 #timeline-container {
   background: var(--q-bg) !important;
-  backdrop-filter: blur(20px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+  /* solid fallback — backdrop-filter may not work in all CEF builds */
+  backdrop-filter: blur(16px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
   border: 1px solid var(--q-border) !important;
   border-radius: var(--q-radius) !important;
-  padding: 6px 8px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55),
-              0 0 0 0.5px rgba(255,255,255,0.04) inset !important;
+  padding: 5px 7px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
   overflow: hidden !important;
-  min-width: 220px;
 }
 
-/* ── Timer bars ──────────────────────────────────────────────────────── */
+/* ── Timer bars (web component — modern cactbot) ─────────────────────── */
 .timer-bar {
   margin: 2px 0 !important;
-  border-radius: 6px !important;
-  overflow: visible !important;
 }
 
-/* Web component parts (modern cactbot) */
+/* Shadow DOM parts */
 timer-bar::part(timerbar-root) {
-  border-radius: 6px !important;
-  overflow: hidden !important;
-  height: 22px !important;
-  background: rgba(255, 255, 255, 0.06) !important;
+  height: 20px !important;
+  border-radius: 5px !important;
+  background: rgba(255,255,255,0.06) !important;
   border: 1px solid var(--q-border) !important;
+  overflow: hidden !important;
 }
 
 timer-bar::part(timerbar-bg) {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border-radius: 6px !important;
+  background: rgba(255,255,255,0.05) !important;
 }
 
 timer-bar::part(timerbar-fg) {
-  background: linear-gradient(90deg, var(--q-accent) 0%, rgba(99,102,241,0.7) 100%) !important;
-  border-radius: 6px !important;
-  transition: width var(--transition-time) linear !important;
+  background: linear-gradient(90deg,
+    var(--q-accent) 0%,
+    rgba(99,102,241,0.65) 100%) !important;
+  border-radius: 5px !important;
 }
 
-/* "Soon" state — approaching timers glow amber */
-.timeline-bar-color.soon timer-bar::part(timerbar-fg),
-timer-bar.soon::part(timerbar-fg) {
-  background: linear-gradient(90deg, #f59e0b 0%, rgba(245,158,11,0.7) 100%) !important;
+/* "Soon" — amber glow when timer is nearly up */
+timer-bar[style*="--bar-color: #f88"]::part(timerbar-fg),
+.timeline-bar-color.soon timer-bar::part(timerbar-fg) {
+  background: linear-gradient(90deg,
+    #f59e0b 0%,
+    rgba(245,158,11,0.65) 100%) !important;
 }
 
 timer-bar::part(text-container) {
-  padding: 0 8px !important;
+  padding: 0 7px !important;
 }
 
 timer-bar::part(text) {
-  font-size: 12px !important;
+  font-size: 11.5px !important;
   font-weight: 600 !important;
   letter-spacing: -0.01em !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  color: var(--q-text) !important;
   text-shadow: none !important;
 }
 
-/* Fallback for older cactbot without ::part() support */
+/* ── Timer bar fallback (older cactbot / non-::part() path) ──────────── */
 .timeline-bar-color {
-  background: linear-gradient(90deg, var(--q-accent), rgba(99,102,241,0.6)) !important;
-  border-radius: 6px !important;
-  height: 22px !important;
+  background: linear-gradient(90deg,
+    var(--q-accent), rgba(99,102,241,0.55)) !important;
+  border-radius: 5px !important;
+  height: 20px !important;
 }
 
 .timeline-bar-color.soon {
-  background: linear-gradient(90deg, #f59e0b, rgba(245,158,11,0.6)) !important;
+  background: linear-gradient(90deg,
+    #f59e0b, rgba(245,158,11,0.55)) !important;
 }
 
 .timer-bar .text {
-  font-size: 12px !important;
+  font-size: 11.5px !important;
   font-weight: 600 !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  line-height: 20px !important;
+  color: var(--q-text) !important;
   text-shadow: none !important;
-  padding: 0 8px !important;
-  line-height: 22px !important;
+  padding: 0 7px !important;
 }
 
-/* ── Popup alert text ────────────────────────────────────────────────── */
-#popup-text-container {
-  pointer-events: none;
-}
+/* ── Alert / Alarm / Info callouts ───────────────────────────────────── */
+#popup-text-container { pointer-events: none; }
 
 #popup-text-alarm,
 #popup-text-alert,
@@ -126,72 +124,62 @@ timer-bar::part(text) {
   text-align: center;
 }
 
-/* Shared card style for all alert levels */
 .alarm-text,
 .alert-text,
 .info-text {
   display: inline-block !important;
-  padding: 6px 18px !important;
-  border-radius: 20px !important;          /* pill shape */
+  padding: 5px 16px !important;
+  border-radius: 999px !important;
   font-weight: 700 !important;
   letter-spacing: -0.01em !important;
   text-shadow: none !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
   border: 1px solid transparent !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
-  animation: q-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.45) !important;
+  animation: q-pop 280ms cubic-bezier(0.34, 1.56, 0.64, 1) both !important;
 }
 
-/* Info — green pill */
 .info-text {
-  font-size: 18px !important;
-  color: var(--q-info) !important;
-  background: rgba(22, 60, 36, 0.80) !important;
-  border-color: rgba(99, 241, 160, 0.25) !important;
+  font-size: 16px !important;
+  color: var(--q-info-fg) !important;
+  background: var(--q-info-bg) !important;
+  border-color: var(--q-info-border) !important;
 }
 
-/* Alert — amber pill */
 .alert-text {
-  font-size: 22px !important;
-  color: var(--q-alert) !important;
-  background: rgba(60, 45, 10, 0.85) !important;
-  border-color: rgba(251, 191, 36, 0.30) !important;
+  font-size: 20px !important;
+  color: var(--q-alert-fg) !important;
+  background: var(--q-alert-bg) !important;
+  border-color: var(--q-alert-border) !important;
 }
 
-/* Alarm — red pill, larger */
 .alarm-text {
-  font-size: 28px !important;
-  color: var(--q-alarm) !important;
-  background: rgba(60, 10, 10, 0.90) !important;
-  border-color: rgba(251, 80, 80, 0.35) !important;
-  box-shadow: 0 4px 24px rgba(251, 80, 80, 0.30),
-              0 4px 16px rgba(0,0,0,0.4) !important;
+  font-size: 26px !important;
+  color: var(--q-alarm-fg) !important;
+  background: var(--q-alarm-bg) !important;
+  border-color: var(--q-alarm-border) !important;
+  box-shadow: 0 4px 24px rgba(248,113,113,0.25),
+              0 4px 20px rgba(0,0,0,0.45) !important;
 }
 
-/* Pop-in spring animation */
 @keyframes q-pop {
-  from { opacity: 0; transform: scale(0.85) translateY(-4px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+  from { opacity: 0; transform: scale(0.80) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
 }
 
-/* Fade-out on removal (cactbot adds animate-text class) */
 .animate-text {
-  animation: q-fade-out 300ms ease forwards !important;
+  animation: q-fade 280ms ease forwards !important;
+}
+@keyframes q-fade {
+  to { opacity: 0; transform: scale(0.92) translateY(4px); }
 }
 
-@keyframes q-fade-out {
-  to { opacity: 0; transform: scale(0.9) translateY(4px); }
-}
-
-/* ── Resize helper (shown when overlay is unlocked) ──────────────────── */
+/* ── Resize helper ───────────────────────────────────────────────────── */
 #timeline-resize-helper {
-  background: var(--q-accent-soft) !important;
+  background: rgba(99,102,241,0.15) !important;
   border: 1px dashed var(--q-accent) !important;
   border-radius: var(--q-radius) !important;
-  color: rgba(255,255,255,0.6) !important;
+  color: rgba(255,255,255,0.5) !important;
   font-size: 11px !important;
-  font-weight: 500 !important;
 }
 
 /* ── Scrollbar ───────────────────────────────────────────────────────── */
