@@ -1,8 +1,8 @@
 import ACT                    from './act.js';
 import Config                 from './config.js';
 import History                from './history.js';
-import { fmtDps, fmtPct, firstName, jobAbbr } from './format.js';
-import { loadSprite, jobIcon, KNOWN_JOBS }     from './jobicons.js';
+import { fmtDps, fmtPct, firstName } from './format.js';
+import { jobIconSrc, hasIcon } from './jobicons.js';
 
 // ── DOM refs ──────────────────────────────────────────────────────────────
 const $app           = document.getElementById('app');
@@ -24,8 +24,8 @@ let lastData     = null;
 let historyOpen  = false;
 let settingsOpen = false;
 
-// ── Boot — load sprite then start ACT ────────────────────────────────────
-loadSprite().then(() => ACT.init());
+// ── Boot ──────────────────────────────────────────────────────────────────
+ACT.init();
 
 // ── Apply saved settings ──────────────────────────────────────────────────
 applyTheme(Config.get('theme'));
@@ -160,7 +160,7 @@ function buildRow(c, rank, maxVal, animDelay = 0) {
   if (animDelay) row.style.animationDelay = `${animDelay}ms`;
 
   const iconHtml = showJobs
-    ? `<div class="combatant-job" title="${job}">${KNOWN_JOBS.has(job) ? jobIcon(job) : jobAbbr(job)}</div>`
+    ? `<div class="combatant-job" title="${job}"><img src="${jobIconSrc(job)}" alt="${job}" loading="lazy" /></div>`
     : '';
 
   row.innerHTML = `

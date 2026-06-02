@@ -1,34 +1,47 @@
 /**
- * Loads the SVG sprite and returns a helper to render job icons.
+ * Job icon resolver using Kagerou-style PNG icons.
+ * Files live at icons/jobs/<lowercase>.png
  */
 
-let spriteLoaded = false;
+// Maps ACT job strings (uppercase) → icon filename (lowercase)
+// Handles both base classes and advanced jobs
+const JOB_MAP = {
+  // Tanks
+  PLD: 'pld', GLA: 'gla',
+  WAR: 'war', MRD: 'mrd',
+  DRK: 'drk',
+  GNB: 'gnb',
+  // Healers
+  WHM: 'whm', CNJ: 'cnj',
+  SCH: 'sch',
+  AST: 'ast',
+  SGE: 'sge',
+  // Melee
+  MNK: 'mnk', PGL: 'pgl',
+  DRG: 'drg', LNC: 'lnc',
+  NIN: 'nin', ROG: 'rog',
+  SAM: 'sam',
+  RPR: 'rpr',
+  VPR: 'vpr',
+  // Physical Ranged
+  BRD: 'brd', ARC: 'arc',
+  MCH: 'mch',
+  DNC: 'dnc',
+  // Magical Ranged
+  BLM: 'blm', THM: 'thm',
+  SMN: 'smn', ACN: 'acn',
+  RDM: 'rdm',
+  PCT: 'pct',
+  // Blue Mage
+  BLU: 'blu',
+};
 
-export async function loadSprite() {
-  if (spriteLoaded) return;
-  try {
-    const res = await fetch('icons/jobs.svg');
-    const text = await res.text();
-    document.getElementById('svg-sprite').innerHTML = text;
-    spriteLoaded = true;
-  } catch (e) {
-    console.warn('[Quartzite] Could not load job icon sprite:', e);
-  }
+export function jobIconSrc(job) {
+  const key = (job || '').toUpperCase();
+  const file = JOB_MAP[key];
+  return file ? `icons/jobs/${file}.png` : 'icons/placeholder.png';
 }
 
-/**
- * Returns an SVG <use> element referencing the job symbol,
- * or null if the symbol doesn't exist in the sprite.
- */
-export function jobIcon(job) {
-  const id = `job-${(job || '').toUpperCase()}`;
-  return `<svg class="job-svg" viewBox="0 0 20 20" aria-hidden="true"><use href="#${id}"/></svg>`;
+export function hasIcon(job) {
+  return (job || '').toUpperCase() in JOB_MAP;
 }
-
-export const KNOWN_JOBS = new Set([
-  'PLD','WAR','DRK','GNB',
-  'WHM','SCH','AST','SGE',
-  'MNK','DRG','NIN','SAM','RPR','VPR',
-  'BRD','MCH','DNC',
-  'BLM','SMN','RDM','PCT',
-]);

@@ -68,15 +68,15 @@ const ACT = (() => {
       { name: 'Krile Baldesion',    job: 'SMN',  base: 11900 },
     ];
 
-    let tick = 0;
+    let elapsed = 0;  // seconds
     let active = true;
 
-    function rng(base) { return base + Math.round((Math.random() - 0.5) * base * 0.12); }
+    function rng(base) { return base + Math.round((Math.random() - 0.5) * base * 0.08); }
 
     setInterval(() => {
       if (!active) return;
-      tick++;
-      const duration = tick * 3;
+      elapsed++;
+      const duration = elapsed;
       const mm = String(Math.floor(duration / 60)).padStart(2, '0');
       const ss = String(duration % 60).padStart(2, '0');
 
@@ -92,7 +92,7 @@ const ACT = (() => {
           damage: String(dmg),
           encdps: String((dmg / duration).toFixed(2)),
           dps:    String((dmg / duration).toFixed(2)),
-          'damage%': '0', // filled after
+          'damage%': '0',
           healed: String(p.base < 6000 ? rng(p.base) * duration * 4 : 0),
           enchps: String(p.base < 6000 ? ((rng(p.base) * duration * 4) / duration).toFixed(2) : '0'),
           damagetaken: String(rng(800) * duration),
@@ -100,6 +100,7 @@ const ACT = (() => {
           hits:     String(Math.floor(rng(200))),
           maxhit:   `${p.job} Combo-${rng(80000)}`,
           deaths:   '0',
+          DURATION: String(duration),
         };
       });
 
@@ -125,7 +126,7 @@ const ACT = (() => {
         },
         Combatant: combatants,
       });
-    }, 3000);
+    }, 1000);
   }
 
   // ── Init ───────────────────────────────────────────────────────────────

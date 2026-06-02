@@ -2,15 +2,22 @@
  * Number and string formatting utilities.
  */
 
+const numFmt = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+/** Full comma-formatted number: 13,690.40 */
 export function fmtDps(val) {
   const n = parseFloat(val) || 0;
-  if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
-  return Math.round(n).toString();
+  return numFmt.format(n);
 }
 
 export function fmtPct(val) {
   const s = String(val || '');
-  return s.endsWith('%') ? s : parseFloat(s).toFixed(1) + '%';
+  const n = parseFloat(s);
+  if (isNaN(n)) return '0.0%';
+  return n.toFixed(1) + '%';
 }
 
 export function firstName(name) {
