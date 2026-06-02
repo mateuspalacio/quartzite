@@ -51,9 +51,11 @@ ACT.init();
 // ── Apply saved settings ──────────────────────────────────────────────────
 applyTheme(Config.get('theme'));
 applyBlur(Config.get('blurNames'));
+applyMaxRows(Config.get('maxRows'));
 
-function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); }
-function applyBlur(v)  { $app.classList.toggle('blur-names', v); }
+function applyTheme(t)    { document.documentElement.setAttribute('data-theme', t); }
+function applyBlur(v)     { $app.classList.toggle('blur-names', v); }
+function applyMaxRows(n)  { $list.style.setProperty('--max-rows', n || 8); }
 
 // ── Encounter-end flash ───────────────────────────────────────────────────
 function flashEncounterEnd() {
@@ -127,7 +129,7 @@ $yourLabel.value   = Config.get('yourLabel');
 $blurNames.addEventListener('change', () => { Config.set('blurNames', $blurNames.checked); applyBlur($blurNames.checked); });
 $mergePets.addEventListener('change', () => { Config.set('mergePets', $mergePets.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
 $showJobs.addEventListener('change',  () => { Config.set('showJobs', $showJobs.checked);   if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
-$maxRows.addEventListener('change',   () => { Config.set('maxRows', parseInt($maxRows.value, 10) || 0); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+$maxRows.addEventListener('change',   () => { const n = parseInt($maxRows.value, 10) || 0; Config.set('maxRows', n); applyMaxRows(n); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
 $theme.addEventListener('change',     () => { Config.set('theme', $theme.value); applyTheme($theme.value); });
 
 function saveAndRerender() { if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); }
