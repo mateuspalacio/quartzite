@@ -1,7 +1,8 @@
-import ACT     from './act.js';
-import Config   from './config.js';
-import History  from './history.js';
+import ACT                    from './act.js';
+import Config                 from './config.js';
+import History                from './history.js';
 import { fmtDps, fmtPct, firstName, jobAbbr } from './format.js';
+import { loadSprite, jobIcon, KNOWN_JOBS }     from './jobicons.js';
 
 // ── DOM refs ──────────────────────────────────────────────────────────────
 const $app           = document.getElementById('app');
@@ -12,33 +13,41 @@ const $rhps          = document.getElementById('encounter-rhps');
 const $list          = document.getElementById('combatant-list');
 const $empty         = document.getElementById('empty-state');
 const $tabs          = document.getElementById('mode-tabs');
-
+const $header        = document.getElementById('encounter-header');
 const $historyPanel  = document.getElementById('history-panel');
 const $historyList   = document.getElementById('history-list');
 const $settingsPanel = document.getElementById('settings-panel');
 
 // ── State ─────────────────────────────────────────────────────────────────
-let mode         = Config.get('mode');         // 'dps' | 'hps' | 'tank'
+let mode         = Config.get('mode');
 let lastData     = null;
 let historyOpen  = false;
 let settingsOpen = false;
+
+// ── Boot — load sprite then start ACT ────────────────────────────────────
+loadSprite().then(() => ACT.init());
 
 // ── Apply saved settings ──────────────────────────────────────────────────
 applyTheme(Config.get('theme'));
 applyBlur(Config.get('blurNames'));
 
-function applyTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-}
+function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); }
+function applyBlur(v)  { $app.classList.toggle('blur-names', v); }
 
-function applyBlur(v) {
-  $app.classList.toggle('blur-names', v);
+// ── Encounter-end flash ───────────────────────────────────────────────────
+function flashEncounterEnd() {
+  $app.classList.remove('encounter-end-flash');
+  // Force reflow so re-adding the class restarts the animation
+  void $app.offsetWidth;
+  $app.classList.add('encounter-end-flash');
+  $app.addEventListener('animationend', () => {
+    $app.classList.remove('encounter-end-flash');
+  }, { once: true });
 }
 
 // ── Tabs ──────────────────────────────────────────────────────────────────
 $tabs.querySelectorAll('.tab').forEach(tab => {
   if (tab.dataset.mode === mode) tab.classList.add('active');
-
   tab.addEventListener('click', () => {
     mode = tab.dataset.mode;
     Config.set('mode', mode);
@@ -84,42 +93,23 @@ const $showJobs   = document.getElementById('set-show-jobs');
 const $maxRows    = document.getElementById('set-max-rows');
 const $theme      = document.getElementById('set-theme');
 
-$blurNames.checked  = Config.get('blurNames');
-$mergePets.checked  = Config.get('mergePets');
-$showJobs.checked   = Config.get('showJobs');
-$maxRows.value      = Config.get('maxRows');
-$theme.value        = Config.get('theme');
+$blurNames.checked = Config.get('blurNames');
+$mergePets.checked = Config.get('mergePets');
+$showJobs.checked  = Config.get('showJobs');
+$maxRows.value     = Config.get('maxRows');
+$theme.value       = Config.get('theme');
 
-$blurNames.addEventListener('change', () => {
-  Config.set('blurNames', $blurNames.checked);
-  applyBlur($blurNames.checked);
-});
-
-$mergePets.addEventListener('change', () => {
-  Config.set('mergePets', $mergePets.checked);
-  if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant);
-});
-
-$showJobs.addEventListener('change', () => {
-  Config.set('showJobs', $showJobs.checked);
-  if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant);
-});
-
-$maxRows.addEventListener('change', () => {
-  Config.set('maxRows', parseInt($maxRows.value, 10) || 0);
-  if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant);
-});
-
-$theme.addEventListener('change', () => {
-  Config.set('theme', $theme.value);
-  applyTheme($theme.value);
-});
+$blurNames.addEventListener('change', () => { Config.set('blurNames', $blurNames.checked); applyBlur($blurNames.checked); });
+$mergePets.addEventListener('change', () => { Config.set('mergePets', $mergePets.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+$showJobs.addEventListener('change',  () => { Config.set('showJobs', $showJobs.checked);   if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+$maxRows.addEventListener('change',   () => { Config.set('maxRows', parseInt($maxRows.value, 10) || 0); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+$theme.addEventListener('change',     () => { Config.set('theme', $theme.value); applyTheme($theme.value); });
 
 // ── Render helpers ────────────────────────────────────────────────────────
 function sortKey(c) {
-  if (mode === 'dps')  return parseFloat(c.encdps)     || 0;
-  if (mode === 'hps')  return parseFloat(c.enchps)     || 0;
-  if (mode === 'tank') return parseFloat(c.damagetaken) || 0;
+  if (mode === 'dps')  return parseFloat(c.encdps)      || 0;
+  if (mode === 'hps')  return parseFloat(c.enchps)      || 0;
+  if (mode === 'tank') return parseFloat(c.damagetaken)  || 0;
   return 0;
 }
 
@@ -132,58 +122,51 @@ function primaryStat(c) {
 
 function mergePets(combatants) {
   if (!Config.get('mergePets')) return combatants;
-
   const merged = {};
-  const petSuffixes = [' (Pet)', "'s Eos", "'s Selene", "'s Seraph",
-                       "'s Carbuncle", "'s Emerald", "'s Topaz", "'s Ruby",
-                       "'s Garuda", "'s Titan", "'s Ifrit",
-                       "'s Bahamut", "'s Phoenix", "'s Demi-Bahamut", "'s Demi-Phoenix",
-                       "'s Solar Bahamut"];
-
+  const petSuffixes = [
+    " (Pet)","'s Eos","'s Selene","'s Seraph","'s Carbuncle",
+    "'s Emerald","'s Topaz","'s Ruby","'s Garuda","'s Titan","'s Ifrit",
+    "'s Bahamut","'s Phoenix","'s Demi-Bahamut","'s Demi-Phoenix","'s Solar Bahamut",
+  ];
   function ownerOf(name) {
-    for (const suf of petSuffixes) {
-      if (name.endsWith(suf)) return name.slice(0, -suf.length);
-    }
+    for (const s of petSuffixes) if (name.endsWith(s)) return name.slice(0, -s.length);
     return null;
   }
-
-  // First pass: copy all real players
-  Object.values(combatants).forEach(c => {
-    const owner = ownerOf(c.name);
-    if (!owner) merged[c.name] = { ...c };
-  });
-
-  // Second pass: merge pet damage into owner
+  Object.values(combatants).forEach(c => { if (!ownerOf(c.name)) merged[c.name] = { ...c }; });
   Object.values(combatants).forEach(c => {
     const owner = ownerOf(c.name);
     if (!owner || !merged[owner]) return;
     const o = merged[owner];
-    const addNum = (k) => { o[k] = String((parseFloat(o[k]) || 0) + (parseFloat(c[k]) || 0)); };
-    ['damage', 'healed', 'damagetaken'].forEach(addNum);
-    // Recalculate rates
+    ['damage','healed','damagetaken'].forEach(k => { o[k] = String((parseFloat(o[k])||0)+(parseFloat(c[k])||0)); });
     const dur = parseFloat(c.DURATION) || 1;
     o.encdps = String((parseFloat(o.damage) / dur).toFixed(2));
     o.enchps = String((parseFloat(o.healed) / dur).toFixed(2));
   });
-
   return merged;
 }
 
-function buildRow(c, rank, maxVal) {
-  const pct   = maxVal > 0 ? ((parseFloat(sortKey(c)) / maxVal) * 100).toFixed(1) : 0;
-  const dmgPct = fmtPct(c['damage%'] || '0%');
-  const job    = (c.Job || 'DEFAULT').toUpperCase();
+function buildRow(c, rank, maxVal, animDelay = 0) {
+  const pct      = maxVal > 0 ? ((sortKey(c) / maxVal) * 100).toFixed(1) : 0;
+  const dmgPct   = fmtPct(c['damage%'] || '0%');
+  const job      = (c.Job || 'DEFAULT').toUpperCase();
   const showJobs = Config.get('showJobs');
 
   const row = document.createElement('div');
   row.className = `combatant-row job-${job}`;
   row.setAttribute('data-name', c.name);
-  row.style.setProperty('--bar-pct', `${pct}%`);
+  // Start bar at 0 so it can animate in
+  row.style.setProperty('--bar-pct', '0%');
+  row.style.setProperty('--bar-target', `${pct}%`);
+  if (animDelay) row.style.animationDelay = `${animDelay}ms`;
+
+  const iconHtml = showJobs
+    ? `<div class="combatant-job" title="${job}">${KNOWN_JOBS.has(job) ? jobIcon(job) : jobAbbr(job)}</div>`
+    : '';
 
   row.innerHTML = `
     <div class="combatant-bar"></div>
     <span class="combatant-rank ${rank <= 3 ? 'rank-' + rank : ''}">${rank}</span>
-    ${showJobs ? `<div class="combatant-job" title="${job}">${jobAbbr(job)}</div>` : ''}
+    ${iconHtml}
     <span class="combatant-name">${firstName(c.name)}</span>
     <div class="combatant-stats">
       <span class="combatant-pct">${dmgPct}</span>
@@ -191,53 +174,50 @@ function buildRow(c, rank, maxVal) {
     </div>
   `;
 
+  // Trigger spring animation on next frame so the element is in the DOM
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      row.style.setProperty('--bar-pct', `${pct}%`);
+    });
+  });
+
   return row;
 }
 
-function renderCombatants(encounter, rawCombatants) {
+function renderCombatants(rawEncounter, rawCombatants) {
   const combatants = mergePets(rawCombatants);
   const maxRows    = Config.get('maxRows') || Infinity;
 
-  let players = Object.values(combatants)
-    .filter(c => c.name && c.name !== 'YOU' /* ACT placeholder */ );
-
+  let players = Object.values(combatants).filter(c => c.name && c.name !== 'YOU');
   players.sort((a, b) => sortKey(b) - sortKey(a));
-
   if (maxRows) players = players.slice(0, maxRows);
 
   const maxVal = players.length ? sortKey(players[0]) : 1;
 
-  // Diff-based update: reuse existing rows where possible
   const existing = {};
-  $list.querySelectorAll('.combatant-row').forEach(el => {
-    existing[el.dataset.name] = el;
-  });
+  $list.querySelectorAll('.combatant-row').forEach(el => { existing[el.dataset.name] = el; });
 
   const fragment = document.createDocumentFragment();
   const seen = new Set();
 
   players.forEach((c, i) => {
     seen.add(c.name);
-    const newRow = buildRow(c, i + 1, maxVal);
-
     if (existing[c.name]) {
-      // Update bar width and stats in place (no re-insert = no flash)
       const old = existing[c.name];
-      old.style.setProperty('--bar-pct', `${(maxVal > 0 ? (sortKey(c) / maxVal * 100) : 0).toFixed(1)}%`);
+      const newPct = maxVal > 0 ? ((sortKey(c) / maxVal) * 100).toFixed(1) : 0;
+      old.style.setProperty('--bar-pct', `${newPct}%`);
       old.querySelector('.combatant-primary').textContent = primaryStat(c);
       old.querySelector('.combatant-pct').textContent = fmtPct(c['damage%'] || '0%');
-      old.querySelector('.combatant-rank').textContent = i + 1;
-      old.querySelector('.combatant-rank').className = `combatant-rank${i < 3 ? ' rank-' + (i + 1) : ''}`;
+      const rankEl = old.querySelector('.combatant-rank');
+      rankEl.textContent = i + 1;
+      rankEl.className = `combatant-rank${i < 3 ? ' rank-' + (i + 1) : ''}`;
       fragment.appendChild(old);
     } else {
-      fragment.appendChild(newRow);
+      fragment.appendChild(buildRow(c, i + 1, maxVal, i * 30));
     }
   });
 
-  // Remove rows no longer present
-  Object.keys(existing).forEach(name => {
-    if (!seen.has(name)) existing[name].remove();
-  });
+  Object.keys(existing).forEach(name => { if (!seen.has(name)) existing[name].remove(); });
 
   $empty.style.display = players.length ? 'none' : 'block';
   $list.appendChild(fragment);
@@ -250,17 +230,14 @@ function renderHeader(encounter) {
   $rhps.textContent     = fmtDps(encounter.enchps);
 }
 
-// ── History panel render ──────────────────────────────────────────────────
 function renderHistoryList() {
   const entries = History.getAll();
   $historyList.innerHTML = '';
-
   if (!entries.length) {
     $historyList.innerHTML = '<li style="padding:16px;text-align:center;color:var(--text-tertiary);font-size:12px;">No history yet</li>';
     return;
   }
-
-  entries.forEach((entry, i) => {
+  entries.forEach(entry => {
     const li = document.createElement('li');
     li.className = 'history-item';
     const enc = entry.encounter;
@@ -283,19 +260,18 @@ function renderHistoryList() {
 
 // ── ACT data handler ──────────────────────────────────────────────────────
 ACT.on('CombatData', data => {
-  // Save to history if encounter just ended
-  if (lastData && lastData.isActive === 'true' && data.isActive === 'false') {
+  const wasActive = lastData?.isActive === 'true';
+  const nowActive = data.isActive === 'true';
+
+  if (wasActive && !nowActive) {
     History.push(lastData.Encounter, lastData.Combatant);
+    flashEncounterEnd();
   }
 
   lastData = data;
 
-  // Don't update display if user is browsing history
   if ($historyList.querySelector('.active')) return;
 
   renderHeader(data.Encounter);
   renderCombatants(data.Encounter, data.Combatant);
 });
-
-// ── Start ─────────────────────────────────────────────────────────────────
-ACT.init();
