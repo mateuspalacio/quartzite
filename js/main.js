@@ -24,6 +24,27 @@ let lastData     = null;
 let historyOpen  = false;
 let settingsOpen = false;
 
+// Live timer state — updated by rAF between ACT ticks
+let timerBase    = 0;   // seconds reported by last ACT event
+let timerTickAt  = 0;   // performance.now() when that event arrived
+let timerActive  = false;
+
+function formatDuration(totalSeconds) {
+  const s = Math.floor(totalSeconds);
+  const mm = String(Math.floor(s / 60)).padStart(2, '0');
+  const ss = String(s % 60).padStart(2, '0');
+  return `${mm}:${ss}`;
+}
+
+// rAF loop — only updates the duration text, nothing else
+(function tickTimer() {
+  if (timerActive) {
+    const elapsed = (performance.now() - timerTickAt) / 1000;
+    $duration.textContent = formatDuration(timerBase + elapsed);
+  }
+  requestAnimationFrame(tickTimer);
+})();
+
 // ── Boot ──────────────────────────────────────────────────────────────────
 ACT.init();
 
@@ -223,11 +244,19 @@ function renderCombatants(rawEncounter, rawCombatants) {
   $empty.style.display = players.length ? 'none' : 'block';
 }
 
-function renderHeader(encounter) {
-  $zone.textContent     = encounter.CurrentZoneName || encounter.title || 'Unknown Zone';
-  $duration.textContent = encounter.duration || '';
-  $rdps.textContent     = fmtDps(encounter.encdps);
-  $rhps.textContent     = fmtDps(encounter.enchps);
+function renderHeader(encounter, isActive) {
+  $zone.textContent = encounter.CurrentZoneName || encounter.title || 'Unknown Zone';
+  $rdps.textContent = fmtDps(encounter.encdps);
+  $rhps.textContent = fmtDps(encounter.enchps);
+
+  // Sync the rAF timer to this tick's reported duration
+  const secs = parseFloat(encounter.DURATION) || 0;
+  timerBase   = secs;
+  timerTickAt = performance.now();
+  timerActive = isActive;
+
+  // If encounter ended, freeze the display at the final time
+  if (!isActive) $duration.textContent = encounter.duration || formatDuration(secs);
 }
 
 function renderHistoryList() {
@@ -251,7 +280,7 @@ function renderHistoryList() {
     li.addEventListener('click', () => {
       $historyList.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
       li.classList.add('active');
-      renderHeader(enc);
+      renderHeader(enc, false);
       renderCombatants(enc, entry.combatants);
     });
     $historyList.appendChild(li);
@@ -272,6 +301,6 @@ ACT.on('CombatData', data => {
 
   if ($historyList.querySelector('.active')) return;
 
-  renderHeader(data.Encounter);
+  renderHeader(data.Encounter, nowActive);
   renderCombatants(data.Encounter, data.Combatant);
 });
