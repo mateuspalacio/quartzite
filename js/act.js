@@ -1,7 +1,6 @@
 /**
- * ACT / OverlayPlugin communication layer.
- * Supports: modern addOverlayListener API, legacy ACTWebSocket, and
- * a mock data mode for development in a regular browser.
+ * ACT / OverlayPlugin / IINACT communication layer.
+ * Priority: modern addOverlayListener API → WebSocket → mock data
  */
 
 const ACT = (() => {
@@ -21,60 +20,81 @@ const ACT = (() => {
     listeners[event] = listeners[event].filter(f => f !== fn);
   }
 
-  // ── Modern OverlayPlugin (ngld fork) ──────────────────────────────────
+  // ── Modern OverlayPlugin / IINACT (injected API) ──────────────────────
   function connectModern() {
-    window.addOverlayListener('CombatData',   d => emit('CombatData', d));
-    window.addOverlayListener('ChangeZone',   d => emit('ChangeZone', d));
-    window.addOverlayListener('LogLine',      d => emit('LogLine', d));
+    console.info('[Quartzite] Using addOverlayListener API');
+    window.addOverlayListener('CombatData', d => emit('CombatData', d));
+    window.addOverlayListener('ChangeZone', d => emit('ChangeZone', d));
+    window.addOverlayListener('LogLine',    d => emit('LogLine', d));
     window.startOverlayEvents?.();
   }
 
-  // ── Legacy WebSocket ──────────────────────────────────────────────────
+  // ── WebSocket (OVERLAY_WS / HOST_PORT params) ─────────────────────────
   function connectLegacy() {
-    const url = (() => {
-      const params = new URLSearchParams(window.location.search);
-      const ws = params.get('OVERLAY_WS') || params.get('HOST_PORT');
-      if (ws) return ws;
-      return 'ws://127.0.0.1:10501/ws';
-    })();
+    const params = new URLSearchParams(window.location.search);
+    let raw = params.get('OVERLAY_WS') || params.get('HOST_PORT') || '';
+
+    // Normalise to a full ws:// URL ending in /ws
+    // HOST_PORT arrives as:  "127.0.0.1:10501"  or  "ws://127.0.0.1:10501"
+    // OVERLAY_WS arrives as: "ws://127.0.0.1:10501/ws"  (already correct)
+    let url;
+    if (!raw) {
+      url = 'ws://127.0.0.1:10501/ws';
+    } else if (!raw.startsWith('ws://') && !raw.startsWith('wss://')) {
+      url = `ws://${raw}/ws`;
+    } else {
+      try {
+        const u = new URL(raw);
+        if (!u.pathname || u.pathname === '/') u.pathname = '/ws';
+        url = u.toString();
+      } catch {
+        url = raw.replace(/\/?$/, '/ws');
+      }
+    }
+
+    console.info('[Quartzite] WebSocket ->', url);
 
     const socket = new WebSocket(url);
 
+    socket.addEventListener('open', () => {
+      // ngld OverlayPlugin subscribe call (harmless if server ignores it)
+      socket.send(JSON.stringify({
+        call: 'subscribe',
+        events: ['CombatData', 'ChangeZone', 'LogLine'],
+      }));
+    });
+
     socket.addEventListener('message', e => {
       try {
-        const data = JSON.parse(e.data);
-        if (data.type) emit(data.type, data);
-      } catch { /* malformed */ }
+        const msg = JSON.parse(e.data);
+        // Modern ngld format: { type: "CombatData", Encounter: {}, ... }
+        if (msg.type) { emit(msg.type, msg); return; }
+        // Legacy ACTWebSocket broadcast: { type:"broadcast", msgtype:"CombatData", msg:{} }
+        if (msg.msgtype) emit(msg.msgtype, msg.msg || msg);
+      } catch { /* malformed packet */ }
     });
 
-    socket.addEventListener('close', () => {
-      setTimeout(connectLegacy, 5000);
-    });
+    socket.addEventListener('close', () => { setTimeout(connectLegacy, 5000); });
+    socket.addEventListener('error', () => { /* close fires after, will retry */ });
   }
 
-  // ── Mock data for browser development ────────────────────────────────
+  // ── Mock data for browser dev ─────────────────────────────────────────
   function connectMock() {
-    const JOBS = ['DRG','BLM','SMN','RDM','MNK','NIN','SAM','RPR',
-                  'BRD','MCH','DNC','WHM','SCH','AST','SGE','GNB','WAR','PLD'];
-
     const players = [
-      { name: 'Estinien Wyrmblood', job: 'DRG', base: 14200 },
-      { name: 'Thancred Waters',    job: 'GNB',  base: 9800  },
-      { name: 'Y\'shtola Rhul',     job: 'WHM',  base: 5100  },
-      { name: 'Alphinaud Leveilleur', job: 'SCH', base: 4800 },
-      { name: 'G\'raha Tia',        job: 'RDM',  base: 12600 },
-      { name: 'Alisaie Leveilleur', job: 'BLM',  base: 13400 },
-      { name: 'Urianger Augurelt',  job: 'AST',  base: 4600  },
-      { name: 'Krile Baldesion',    job: 'SMN',  base: 11900 },
+      { name: 'Estinien Wyrmblood',   job: 'DRG', base: 14200 },
+      { name: 'Thancred Waters',      job: 'GNB',  base: 9800  },
+      { name: "Y'shtola Rhul",        job: 'WHM',  base: 5100  },
+      { name: 'Alphinaud Leveilleur', job: 'SCH',  base: 4800  },
+      { name: "G'raha Tia",           job: 'RDM',  base: 12600 },
+      { name: 'Alisaie Leveilleur',   job: 'BLM',  base: 13400 },
+      { name: 'Urianger Augurelt',    job: 'AST',  base: 4600  },
+      { name: 'Krile Baldesion',      job: 'SMN',  base: 11900 },
     ];
 
-    let elapsed = 0;  // seconds
-    let active = true;
-
+    let elapsed = 0;
     function rng(base) { return base + Math.round((Math.random() - 0.5) * base * 0.08); }
 
     setInterval(() => {
-      if (!active) return;
       elapsed++;
       const duration = elapsed;
       const mm = String(Math.floor(duration / 60)).padStart(2, '0');
@@ -87,14 +107,13 @@ const ACT = (() => {
         const dmg = rng(p.base) * duration;
         totalDmg += dmg;
         combatants[p.name] = {
-          name: p.name,
-          Job: p.job,
+          name: p.name, Job: p.job,
           damage: String(dmg),
           encdps: String((dmg / duration).toFixed(2)),
           dps:    String((dmg / duration).toFixed(2)),
           'damage%': '0',
-          healed: String(p.base < 6000 ? rng(p.base) * duration * 4 : 0),
-          enchps: String(p.base < 6000 ? ((rng(p.base) * duration * 4) / duration).toFixed(2) : '0'),
+          healed:      String(p.base < 6000 ? rng(p.base) * duration * 4 : 0),
+          enchps:      String(p.base < 6000 ? ((rng(p.base) * duration * 4) / duration).toFixed(2) : '0'),
           damagetaken: String(rng(800) * duration),
           crithits: String(Math.floor(rng(30))),
           hits:     String(Math.floor(rng(200))),
@@ -120,8 +139,7 @@ const ACT = (() => {
           healed:   String(totalDmg * 0.3),
           enchps:   String((totalDmg * 0.3 / duration).toFixed(2)),
           maxhit:   'DRG Combo-318450',
-          kills:    '0',
-          deaths:   '0',
+          kills: '0', deaths: '0',
           CurrentZoneName: 'The Unending Coil of Bahamut (Ultimate)',
         },
         Combatant: combatants,
@@ -129,17 +147,25 @@ const ACT = (() => {
     }, 250);
   }
 
-  // ── Init ───────────────────────────────────────────────────────────────
+  // ── Init ──────────────────────────────────────────────────────────────
   function init() {
+    const hasWsParam = /OVERLAY_WS|HOST_PORT/.test(window.location.search);
+
     if (typeof window.addOverlayListener === 'function') {
       connectModern();
-    } else if (window.location.search.includes('OVERLAY_WS') ||
-               window.location.search.includes('HOST_PORT')) {
+    } else if (hasWsParam) {
+      // Params present but API not injected — connect via WebSocket
       connectLegacy();
     } else {
-      // Dev mode — no ACT running
-      console.info('[Quartzite] No ACT detected — running mock data');
-      connectMock();
+      // Wait 300ms in case OverlayPlugin injects the API after page load
+      setTimeout(() => {
+        if (typeof window.addOverlayListener === 'function') {
+          connectModern();
+        } else {
+          console.info('[Quartzite] No ACT detected — running mock data');
+          connectMock();
+        }
+      }, 300);
     }
   }
 
