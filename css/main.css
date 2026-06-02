@@ -28,8 +28,8 @@
 
   --blur:            blur(20px) saturate(160%);
   --radius-sm:       6px;
-  --radius-md:       10px;
-  --radius-lg:       14px;
+  --radius-md:       12px;
+  --radius-lg:       18px;
 
   --font:            'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   /* Apple-style numeric font: SF Pro Display on macOS/iOS, Segoe UI on Windows */
@@ -66,23 +66,11 @@
 html, body {
   width: 100%;
   min-height: 100%;
-  /* In ACT/OBS this is transparent; in browser dev mode show a gradient so
-     the frosted glass effect is visible */
-  background: transparent;
+  background: transparent !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Dev-mode backdrop so backdrop-filter has something to blur */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg,
-    #0f0c29 0%, #302b63 40%, #24243e 70%, #1a1a2e 100%);
-  z-index: -1;
-  pointer-events: none;
-}
 
 body {
   font-family: var(--font);
