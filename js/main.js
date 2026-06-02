@@ -176,13 +176,14 @@ function buildRow(c, rank, maxVal) {
   const showJobs = Config.get('showJobs');
 
   const row = document.createElement('div');
-  row.className = 'combatant-row';
+  row.className = `combatant-row job-${job}`;
   row.setAttribute('data-name', c.name);
+  row.style.setProperty('--bar-pct', `${pct}%`);
 
   row.innerHTML = `
-    <div class="combatant-bar" style="--bar-pct:${pct}%"></div>
+    <div class="combatant-bar"></div>
     <span class="combatant-rank ${rank <= 3 ? 'rank-' + rank : ''}">${rank}</span>
-    ${showJobs ? `<div class="combatant-job job-${job}" title="${job}">${jobAbbr(job)}</div>` : ''}
+    ${showJobs ? `<div class="combatant-job" title="${job}">${jobAbbr(job)}</div>` : ''}
     <span class="combatant-name">${firstName(c.name)}</span>
     <div class="combatant-stats">
       <span class="combatant-pct">${dmgPct}</span>
@@ -222,7 +223,7 @@ function renderCombatants(encounter, rawCombatants) {
     if (existing[c.name]) {
       // Update bar width and stats in place (no re-insert = no flash)
       const old = existing[c.name];
-      old.querySelector('.combatant-bar').style.setProperty('--bar-pct', `${(maxVal > 0 ? (sortKey(c) / maxVal * 100) : 0).toFixed(1)}%`);
+      old.style.setProperty('--bar-pct', `${(maxVal > 0 ? (sortKey(c) / maxVal * 100) : 0).toFixed(1)}%`);
       old.querySelector('.combatant-primary').textContent = primaryStat(c);
       old.querySelector('.combatant-pct').textContent = fmtPct(c['damage%'] || '0%');
       old.querySelector('.combatant-rank').textContent = i + 1;
