@@ -145,7 +145,7 @@ function mergePets(combatants) {
   return merged;
 }
 
-function buildRow(c, rank, maxVal, animDelay = 0) {
+function buildRow(c, rank, maxVal) {
   const pct      = maxVal > 0 ? ((sortKey(c) / maxVal) * 100).toFixed(1) : 0;
   const dmgPct   = fmtPct(c['damage%'] || '0%');
   const job      = (c.Job || 'DEFAULT').toUpperCase();
@@ -154,10 +154,8 @@ function buildRow(c, rank, maxVal, animDelay = 0) {
   const row = document.createElement('div');
   row.className = `combatant-row job-${job}`;
   row.setAttribute('data-name', c.name);
-  // Start bar at 0 so it can animate in
+  // Bar starts at 0; double-rAF lets the element paint before transitioning
   row.style.setProperty('--bar-pct', '0%');
-  row.style.setProperty('--bar-target', `${pct}%`);
-  if (animDelay) row.style.animationDelay = `${animDelay}ms`;
 
   const iconHtml = showJobs
     ? `<div class="combatant-job" title="${job}"><img src="${jobIconSrc(job)}" alt="${job}" loading="lazy" /></div>`
@@ -174,12 +172,9 @@ function buildRow(c, rank, maxVal, animDelay = 0) {
     </div>
   `;
 
-  // Trigger spring animation on next frame so the element is in the DOM
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      row.style.setProperty('--bar-pct', `${pct}%`);
-    });
-  });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    row.style.setProperty('--bar-pct', `${pct}%`);
+  }));
 
   return row;
 }
@@ -194,33 +189,38 @@ function renderCombatants(rawEncounter, rawCombatants) {
 
   const maxVal = players.length ? sortKey(players[0]) : 1;
 
+  // Index existing rows by name — never move them, use CSS order instead
   const existing = {};
   $list.querySelectorAll('.combatant-row').forEach(el => { existing[el.dataset.name] = el; });
 
-  const fragment = document.createDocumentFragment();
   const seen = new Set();
 
   players.forEach((c, i) => {
     seen.add(c.name);
+    const newPct = maxVal > 0 ? ((sortKey(c) / maxVal) * 100).toFixed(1) : 0;
+
     if (existing[c.name]) {
-      const old = existing[c.name];
-      const newPct = maxVal > 0 ? ((sortKey(c) / maxVal) * 100).toFixed(1) : 0;
-      old.style.setProperty('--bar-pct', `${newPct}%`);
-      old.querySelector('.combatant-primary').textContent = primaryStat(c);
-      old.querySelector('.combatant-pct').textContent = fmtPct(c['damage%'] || '0%');
-      const rankEl = old.querySelector('.combatant-rank');
+      // Update in-place — no DOM move, no animation replay
+      const row = existing[c.name];
+      row.style.order = i;
+      row.style.setProperty('--bar-pct', `${newPct}%`);
+      row.querySelector('.combatant-primary').textContent = primaryStat(c);
+      row.querySelector('.combatant-pct').textContent = fmtPct(c['damage%'] || '0%');
+      const rankEl = row.querySelector('.combatant-rank');
       rankEl.textContent = i + 1;
       rankEl.className = `combatant-rank${i < 3 ? ' rank-' + (i + 1) : ''}`;
-      fragment.appendChild(old);
     } else {
-      fragment.appendChild(buildRow(c, i + 1, maxVal, i * 30));
+      // New player — build, set order, append once
+      const row = buildRow(c, i + 1, maxVal);
+      row.style.order = i;
+      $list.appendChild(row);
     }
   });
 
+  // Remove players no longer in the list
   Object.keys(existing).forEach(name => { if (!seen.has(name)) existing[name].remove(); });
 
   $empty.style.display = players.length ? 'none' : 'block';
-  $list.appendChild(fragment);
 }
 
 function renderHeader(encounter) {
