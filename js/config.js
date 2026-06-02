@@ -9,6 +9,8 @@ const DEFAULTS = {
   maxRows:    8,
   theme:      'dark',
   mode:       'dps',
+  yourName:   '',      // character name to highlight
+  yourLabel:  'YOU',   // what to display instead
 };
 
 const KEY = 'quartzite_settings';

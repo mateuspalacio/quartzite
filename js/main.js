@@ -113,18 +113,26 @@ const $mergePets  = document.getElementById('set-merge-pets');
 const $showJobs   = document.getElementById('set-show-jobs');
 const $maxRows    = document.getElementById('set-max-rows');
 const $theme      = document.getElementById('set-theme');
+const $yourName   = document.getElementById('set-your-name');
+const $yourLabel  = document.getElementById('set-your-label');
 
 $blurNames.checked = Config.get('blurNames');
 $mergePets.checked = Config.get('mergePets');
 $showJobs.checked  = Config.get('showJobs');
 $maxRows.value     = Config.get('maxRows');
 $theme.value       = Config.get('theme');
+$yourName.value    = Config.get('yourName');
+$yourLabel.value   = Config.get('yourLabel');
 
 $blurNames.addEventListener('change', () => { Config.set('blurNames', $blurNames.checked); applyBlur($blurNames.checked); });
 $mergePets.addEventListener('change', () => { Config.set('mergePets', $mergePets.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
 $showJobs.addEventListener('change',  () => { Config.set('showJobs', $showJobs.checked);   if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
 $maxRows.addEventListener('change',   () => { Config.set('maxRows', parseInt($maxRows.value, 10) || 0); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
 $theme.addEventListener('change',     () => { Config.set('theme', $theme.value); applyTheme($theme.value); });
+
+function saveAndRerender() { if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); }
+$yourName.addEventListener('input',  () => { Config.set('yourName',  $yourName.value.trim());  saveAndRerender(); });
+$yourLabel.addEventListener('input', () => { Config.set('yourLabel', $yourLabel.value.trim()); saveAndRerender(); });
 
 // ── Render helpers ────────────────────────────────────────────────────────
 function sortKey(c) {
@@ -172,8 +180,17 @@ function buildRow(c, rank, maxVal) {
   const job      = (c.Job || 'DEFAULT').toUpperCase();
   const showJobs = Config.get('showJobs');
 
+  // "You" highlighting — match full name or first name
+  const yourName  = Config.get('yourName').toLowerCase();
+  const yourLabel = Config.get('yourLabel') || 'YOU';
+  const isYou     = yourName && (
+    c.name.toLowerCase() === yourName ||
+    firstName(c.name).toLowerCase() === yourName
+  );
+  const displayName = isYou ? yourLabel : firstName(c.name);
+
   const row = document.createElement('div');
-  row.className = `combatant-row job-${job}`;
+  row.className = `combatant-row job-${job}${isYou ? ' is-you' : ''}`;
   row.setAttribute('data-name', c.name);
   // Bar starts at 0; double-rAF lets the element paint before transitioning
   row.style.setProperty('--bar-pct', '0%');
@@ -186,7 +203,7 @@ function buildRow(c, rank, maxVal) {
     <div class="combatant-bar"></div>
     <span class="combatant-rank ${rank <= 3 ? 'rank-' + rank : ''}">${rank}</span>
     ${iconHtml}
-    <span class="combatant-name">${firstName(c.name)}</span>
+    <span class="combatant-name">${displayName}</span>
     <div class="combatant-stats">
       <span class="combatant-pct">${dmgPct}</span>
       <span class="combatant-primary">${primaryStat(c)}</span>
@@ -223,8 +240,16 @@ function renderCombatants(rawEncounter, rawCombatants) {
     if (existing[c.name]) {
       // Update in-place — no DOM move, no animation replay
       const row = existing[c.name];
+      const yourName  = Config.get('yourName').toLowerCase();
+      const yourLabel = Config.get('yourLabel') || 'YOU';
+      const isYou     = yourName && (
+        c.name.toLowerCase() === yourName ||
+        firstName(c.name).toLowerCase() === yourName
+      );
+      row.classList.toggle('is-you', isYou);
       row.style.order = i;
       row.style.setProperty('--bar-pct', `${newPct}%`);
+      row.querySelector('.combatant-name').textContent = isYou ? yourLabel : firstName(c.name);
       row.querySelector('.combatant-primary').textContent = primaryStat(c);
       row.querySelector('.combatant-pct').textContent = fmtPct(c['damage%'] || '0%');
       const rankEl = row.querySelector('.combatant-rank');
