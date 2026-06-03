@@ -315,6 +315,23 @@ function renderHistoryList() {
 }
 
 // ── ACT data handler ──────────────────────────────────────────────────────
+function clearHistorySelection() {
+  $historyList.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+}
+
+ACT.on('ChangeZone', () => {
+  // New zone — drop stale encounter data immediately
+  clearHistorySelection();
+  $zone.textContent = 'Waiting for combat…';
+  $duration.textContent = '';
+  $rdps.textContent = '—';
+  $rhps.textContent = '—';
+  timerActive = false;
+  $list.innerHTML = '';
+  $empty.style.display = 'block';
+  lastData = null;
+});
+
 ACT.on('CombatData', data => {
   const wasActive = lastData?.isActive === 'true';
   const nowActive = data.isActive === 'true';
@@ -322,6 +339,11 @@ ACT.on('CombatData', data => {
   if (wasActive && !nowActive) {
     History.push(lastData.Encounter, lastData.Combatant);
     flashEncounterEnd();
+  }
+
+  // New fight starting — always break out of any frozen history view
+  if (!wasActive && nowActive) {
+    clearHistorySelection();
   }
 
   lastData = data;
