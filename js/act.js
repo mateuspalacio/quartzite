@@ -166,20 +166,29 @@ const ACT = (() => {
 
     if (typeof window.addOverlayListener === 'function') {
       connectModern();
-    } else if (hasWsParam) {
-      // Params present but API not injected — connect via WebSocket
-      connectLegacy();
-    } else {
-      // Wait 300ms in case OverlayPlugin injects the API after page load
-      setTimeout(() => {
-        if (typeof window.addOverlayListener === 'function') {
-          connectModern();
-        } else {
-          console.info('[Quartzite] No ACT detected — waiting for combat');
-          // connectMock(); // uncomment locally for UI dev
-        }
-      }, 300);
+      return;
     }
+    if (hasWsParam) {
+      connectLegacy();
+      return;
+    }
+
+    // OverlayPlugin may inject addOverlayListener slightly after page load.
+    // Poll every 50ms for up to 2s, then fall back to WebSocket default port.
+    let attempts = 0;
+    const poll = setInterval(() => {
+      attempts++;
+      if (typeof window.addOverlayListener === 'function') {
+        clearInterval(poll);
+        connectModern();
+      } else if (attempts >= 40) {
+        clearInterval(poll);
+        // Last resort: try WebSocket on the default ACT port
+        console.info('[Quartzite] addOverlayListener not found — trying WebSocket fallback');
+        connectLegacy();
+        // connectMock(); // uncomment locally for UI dev
+      }
+    }, 50);
   }
 
   return { init, on, off };
