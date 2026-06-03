@@ -273,7 +273,7 @@ function renderEmptyState() {
   $empty.innerHTML = `
     <div class="changelog">
       <div class="changelog-title">Quartzite <span class="changelog-beta">BETA</span></div>
-      <div class="changelog-subtitle">Waiting for combat…</div>
+      <div class="changelog-subtitle">Waiting for combat… · <span class="changelog-current-ver">${latest.version}</span></div>
       <div class="changelog-entries">
         ${CHANGELOG.map(entry => `
           <div class="changelog-entry">

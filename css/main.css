@@ -276,6 +276,11 @@ body {
   margin-top: -6px;
 }
 
+.changelog-current-ver {
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
 .changelog-entries {
   display: flex;
   flex-direction: column;
