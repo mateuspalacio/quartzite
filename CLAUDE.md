@@ -12,7 +12,7 @@ Quartzite is a vanilla ES-module web overlay for Final Fantasy XIV, designed to 
 
 Open `index.html` directly in a browser, or serve the folder with any static file server. To see live data without ACT, temporarily uncomment `connectMock()` in `js/act.js` (see the comment in the `init()` function). Remember to re-comment it before committing.
 
-There are no tests, no linter config, and no CI beyond GitHub Pages auto-deploy on push to `master`.
+There are no tests, no linter config, and no CI. GitHub Actions deploys `master` to the root of GitHub Pages and any branch matching `v*` to `preview/<branch-name>/`.
 
 ## Architecture
 
@@ -42,6 +42,7 @@ ACT / IINACT
 | `js/jobicons.js` | Maps job abbreviation → CSS `background-position` in `icons/classes.png` |
 | `js/format.js` | `fmtDps`, `fmtPct`, `firstName`, `jobAbbr` |
 | `css/main.css` | All layout, theming (CSS custom properties), animations |
+| `css/appearances.css` | Per-appearance overrides (`dynamis`, `corgi`, `shadcn`) — set via `data-appearance` on `<html>` |
 | `css/jobs.css` | Per-job `--job-color` CSS variables (used for bar gradient) |
 | `icons/classes.png` | Kagerou sprite sheet — 11×6 grid, `background-size: 1100% 600%` |
 
@@ -67,7 +68,7 @@ Only players with a job in the `PLAYER_JOBS` set AND `damage > 0 || healed > 0` 
 
 ## Versioning
 
-**Current version: v0.5 "Twintania" (beta)**
+**Current version: v0.6 "Rafflesia" (beta)** — branch `v0.6-rafflesia`
 
 The version is displayed in the Settings panel (`index.html`) and in the empty-state changelog (`js/main.js` → `CHANGELOG`).
 

@@ -3,15 +3,16 @@
  */
 
 const DEFAULTS = {
-  blurNames:  false,
-  mergePets:  true,
-  showJobs:   true,
-  maxRows:    8,
-  theme:      'dark',
-  mode:       'dps',
-  yourName:   '',      // character name to highlight
-  yourLabel:  'YOU',   // what to display instead
-  fullNames:  false,   // show full "Firstname Lastname" instead of first name only
+  blurNames:   false,
+  mergePets:   true,
+  showJobs:    true,
+  maxRows:     8,
+  theme:       'dark',
+  appearance:  'dynamis',
+  mode:        'dps',
+  yourName:    '',      // character name to highlight
+  yourLabel:   'YOU',   // what to display instead
+  fullNames:   false,   // show full "Firstname Lastname" instead of first name only
 };
 
 const KEY = 'quartzite_settings';

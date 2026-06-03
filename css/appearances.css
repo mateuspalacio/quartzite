@@ -1,0 +1,87 @@
+/* ── Quartzite Appearances ───────────────────────────────────────────── */
+/* Each [data-appearance] block overrides the CSS custom properties        */
+/* defined in main.css. The base (no attribute) is "Dynamis Crystal".      */
+
+/* ── Dynamis Crystal (default) ───────────────────────────────────────── */
+/* Uses base :root variables — no overrides needed.                        */
+
+/* ── Corgi ────────────────────────────────────────────────────────────── */
+[data-appearance="corgi"] {
+  --accent:           #e07b39;
+  --accent-soft:      rgba(224, 123, 57, 0.18);
+  --accent-glow:      rgba(224, 123, 57, 0.35);
+
+  --bg-base:          rgba(42, 26, 12, 0.88);
+  --bg-surface:       rgba(255, 200, 130, 0.07);
+  --bg-surface-hover: rgba(255, 200, 130, 0.13);
+  --bg-panel:         rgba(36, 22, 10, 0.96);
+  --bg-bar:           rgba(255, 200, 130, 0.09);
+
+  --border:           rgba(255, 180, 80, 0.12);
+  --border-strong:    rgba(255, 180, 80, 0.22);
+
+  --text-primary:     rgba(255, 240, 210, 0.95);
+  --text-secondary:   rgba(255, 200, 140, 0.60);
+  --text-tertiary:    rgba(255, 200, 140, 0.32);
+
+  --blur:             blur(20px) saturate(140%);
+  --radius-lg:        22px;
+}
+
+/* Corgi mascot in the bottom-right corner of the app shell */
+[data-appearance="corgi"] .app::after {
+  content: '🐕';
+  position: absolute;
+  bottom: 4px;
+  right: 8px;
+  font-size: 28px;
+  line-height: 1;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+  filter: sepia(0.4);
+}
+
+/* ── ShadCN ───────────────────────────────────────────────────────────── */
+[data-appearance="shadcn"] {
+  --accent:           #ffffff;
+  --accent-soft:      rgba(255, 255, 255, 0.10);
+  --accent-glow:      rgba(255, 255, 255, 0.15);
+
+  --bg-base:          rgba(9, 9, 11, 0.97);
+  --bg-surface:       rgba(255, 255, 255, 0.04);
+  --bg-surface-hover: rgba(255, 255, 255, 0.07);
+  --bg-panel:         rgba(9, 9, 11, 0.99);
+  --bg-bar:           rgba(255, 255, 255, 0.05);
+
+  --border:           rgba(255, 255, 255, 0.10);
+  --border-strong:    rgba(255, 255, 255, 0.16);
+
+  --text-primary:     rgba(250, 250, 250, 0.98);
+  --text-secondary:   rgba(161, 161, 170, 1);
+  --text-tertiary:    rgba(113, 113, 122, 1);
+
+  --blur:             none;
+  --radius-sm:        4px;
+  --radius-md:        6px;
+  --radius-lg:        8px;
+}
+
+/* ShadCN: no frosted glass, solid border */
+[data-appearance="shadcn"] .app {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: var(--border-strong);
+}
+
+/* ShadCN: flat bars, no gradient softness */
+[data-appearance="shadcn"] .combatant-bar {
+  opacity: 0.12;
+  background: var(--job-color, var(--accent));
+  border-radius: 0;
+}
+
+/* ShadCN: rank accent becomes zinc */
+[data-appearance="shadcn"] .combatant-rank.rank-1 { color: #fafafa; }
+[data-appearance="shadcn"] .combatant-rank.rank-2 { color: #a1a1aa; }
+[data-appearance="shadcn"] .combatant-rank.rank-3 { color: #71717a; }

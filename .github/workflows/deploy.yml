@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine deploy path
+        id: path
+        run: |
+          if [ "${{ github.ref_name }}" = "master" ]; then
+            echo "dest=." >> $GITHUB_OUTPUT
+          else
+            echo "dest=preview/${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          destination_dir: ${{ steps.path.outputs.dest }}
+          exclude_assets: '.github,.git,CLAUDE.md'
+          keep_files: true

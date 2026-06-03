@@ -61,12 +61,14 @@ ACT.init();
 
 // ── Apply saved settings ──────────────────────────────────────────────────
 applyTheme(Config.get('theme'));
+applyAppearance(Config.get('appearance'));
 applyBlur(Config.get('blurNames'));
 applyMaxRows(Config.get('maxRows'));
 
-function applyTheme(t)    { document.documentElement.setAttribute('data-theme', t); }
-function applyBlur(v)     { $app.classList.toggle('blur-names', v); }
-function applyMaxRows(n)  { $list.style.setProperty('--max-rows', n || 8); }
+function applyTheme(t)      { document.documentElement.setAttribute('data-theme', t); }
+function applyAppearance(a) { document.documentElement.setAttribute('data-appearance', a); }
+function applyBlur(v)       { $app.classList.toggle('blur-names', v); }
+function applyMaxRows(n)    { $list.style.setProperty('--max-rows', n || 8); }
 
 // ── Encounter-end flash ───────────────────────────────────────────────────
 function flashEncounterEnd() {
@@ -125,8 +127,9 @@ const $fullNames  = document.getElementById('set-full-names');
 const $blurNames  = document.getElementById('set-blur-names');
 const $mergePets  = document.getElementById('set-merge-pets');
 const $showJobs   = document.getElementById('set-show-jobs');
-const $maxRows    = document.getElementById('set-max-rows');
-const $theme      = document.getElementById('set-theme');
+const $maxRows     = document.getElementById('set-max-rows');
+const $theme       = document.getElementById('set-theme');
+const $appearance  = document.getElementById('set-appearance');
 const $yourName   = document.getElementById('set-your-name');
 const $yourLabel  = document.getElementById('set-your-label');
 
@@ -153,8 +156,9 @@ $mergePets.checked = Config.get('mergePets');
 $showJobs.checked  = Config.get('showJobs');
 $yourName.value    = Config.get('yourName');
 $yourLabel.value   = Config.get('yourLabel');
-pillInit($maxRows, Config.get('maxRows'), v => { const n = parseInt(v, 10) || 0; Config.set('maxRows', n); applyMaxRows(n); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
-pillInit($theme,   Config.get('theme'),   v => { Config.set('theme', v); applyTheme(v); });
+pillInit($maxRows,    Config.get('maxRows'),    v => { const n = parseInt(v, 10) || 0; Config.set('maxRows', n); applyMaxRows(n); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+pillInit($theme,      Config.get('theme'),      v => { Config.set('theme', v); applyTheme(v); });
+pillInit($appearance, Config.get('appearance'), v => { Config.set('appearance', v); applyAppearance(v); });
 
 $fullNames.addEventListener('change', () => { Config.set('fullNames', $fullNames.checked); saveAndRerender(); });
 $blurNames.addEventListener('change', () => { Config.set('blurNames', $blurNames.checked); applyBlur($blurNames.checked); });

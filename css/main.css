@@ -1,4 +1,4 @@
-/* ── Quartzite — Apple-aesthetic ACT Overlay ─────────────────────────── */
+/* ── Quartzite — ACT Overlay ─────────────────────────────────────────── */
 
 /* ── Custom Properties ───────────────────────────────────────────────── */
 :root {
@@ -31,11 +31,10 @@
   --radius-md:       12px;
   --radius-lg:       18px;
 
-  --font:            'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-  /* Apple-style numeric font: SF Pro Display on macOS/iOS, Segoe UI on Windows */
-  --num-font:        -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-                     'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
-  --mono:            'SF Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+  --font:            'Inter', system-ui, sans-serif;
+  /* System numeric font: uses the best available on each OS */
+  --num-font:        system-ui, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --mono:            ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
 
   --row-height:      36px;
   --transition:      150ms cubic-bezier(0.4, 0, 0.2, 1);
