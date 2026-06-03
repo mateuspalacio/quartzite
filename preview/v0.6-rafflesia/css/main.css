@@ -1,0 +1,785 @@
+/* ── Quartzite — ACT Overlay ─────────────────────────────────────────── */
+
+/* ── Custom Properties ───────────────────────────────────────────────── */
+:root {
+  /* Accent — Indigo */
+  --accent:          #6366f1;
+  --accent-soft:     rgba(99, 102, 241, 0.18);
+  --accent-glow:     rgba(99, 102, 241, 0.35);
+
+  /* Dark theme (default) */
+  --bg-base:         rgba(12, 12, 18, 0.78);
+  --bg-surface:      rgba(255, 255, 255, 0.055);
+  --bg-surface-hover:rgba(255, 255, 255, 0.09);
+  --bg-panel:        rgba(18, 18, 26, 0.92);
+  --bg-bar:          rgba(255, 255, 255, 0.07);
+  --bg-bar-fill:     var(--accent);
+
+  --border:          rgba(255, 255, 255, 0.08);
+  --border-strong:   rgba(255, 255, 255, 0.14);
+
+  --text-primary:    rgba(255, 255, 255, 0.92);
+  --text-secondary:  rgba(255, 255, 255, 0.55);
+  --text-tertiary:   rgba(255, 255, 255, 0.30);
+
+  --shadow-sm:       0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:       0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:       0 12px 40px rgba(0,0,0,0.6);
+
+  --blur:            blur(20px) saturate(160%);
+  --radius-sm:       6px;
+  --radius-md:       12px;
+  --radius-lg:       18px;
+
+  --font:            'Inter', system-ui, sans-serif;
+  /* System numeric font: uses the best available on each OS */
+  --num-font:        system-ui, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --mono:            ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+
+  --row-height:      36px;
+  --transition:      150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --spring:          400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="light"] {
+  --bg-base:         rgba(245, 245, 250, 0.82);
+  --bg-surface:      rgba(0, 0, 0, 0.035);
+  --bg-surface-hover:rgba(0, 0, 0, 0.065);
+  --bg-panel:        rgba(248, 248, 252, 0.96);
+  --bg-bar:          rgba(0, 0, 0, 0.06);
+
+  --border:          rgba(0, 0, 0, 0.07);
+  --border-strong:   rgba(0, 0, 0, 0.12);
+
+  --text-primary:    rgba(0, 0, 0, 0.88);
+  --text-secondary:  rgba(0, 0, 0, 0.50);
+  --text-tertiary:   rgba(0, 0, 0, 0.28);
+
+  --shadow-sm:       0 1px 3px rgba(0,0,0,0.10);
+  --shadow-md:       0 4px 16px rgba(0,0,0,0.14);
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+body {
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* ── App Shell ───────────────────────────────────────────────────────── */
+.app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 280px;
+  background: var(--bg-base);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  /* No box-shadow: it renders as a visible rectangle in Browsingway */
+  overflow: hidden;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Encounter Header ─────────────────────────────────────────────────── */
+.encounter-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px 9px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.encounter-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.encounter-zone {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.encounter-duration {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--mono);
+}
+
+.encounter-stats {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.encounter-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.encounter-stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-family: var(--num-font);
+  letter-spacing: -0.03em;
+}
+
+.encounter-stat-label {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.header-controls {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ── Icon Button ──────────────────────────────────────────────────────── */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.icon-btn:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.icon-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* ── Mode Tabs ────────────────────────────────────────────────────────── */
+.mode-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  flex: 1;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.tab:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.tab.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* ── Combatant List ───────────────────────────────────────────────────── */
+.combatant-list {
+  padding: 4px 6px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.empty-state {
+  padding: 12px 8px 16px;
+}
+
+/* ── Changelog (empty state) ──────────────────────────────────────────── */
+.changelog {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.changelog-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.changelog-beta {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 1px 5px;
+  vertical-align: middle;
+}
+
+.changelog-subtitle {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: -6px;
+}
+
+.changelog-current-ver {
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
+.changelog-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.changelog-entry {
+  border-left: 2px solid var(--border-strong);
+  padding-left: 10px;
+}
+
+.changelog-version {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.changelog-ver {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
+.changelog-date {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-family: var(--mono);
+}
+
+.changelog-notes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.changelog-notes li {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.changelog-notes li::before {
+  content: '· ';
+  color: var(--text-tertiary);
+}
+
+/* ── Combatant Row ────────────────────────────────────────────────────── */
+.combatant-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--row-height);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  cursor: default;
+  transition: background var(--transition);
+}
+
+.combatant-row:hover {
+  background: var(--bg-surface-hover);
+}
+
+/* Damage bar fills the row background */
+.combatant-bar {
+  position: absolute;
+  inset: 0;
+  right: auto;
+  width: var(--bar-pct, 0%);
+  background: linear-gradient(90deg, var(--job-color, var(--accent)) 0%, transparent 100%);
+  opacity: 0.16;
+  border-radius: var(--radius-sm);
+  /* Spring-like cubic-bezier: overshoots slightly then settles */
+  transition: width 700ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* Rank */
+.combatant-rank {
+  position: relative;
+  z-index: 1;
+  width: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  text-align: right;
+  margin-right: 6px;
+}
+
+.combatant-rank.rank-1 { color: #f5c842; }
+.combatant-rank.rank-2 { color: #b0b8c8; }
+.combatant-rank.rank-3 { color: #cd7f45; }
+
+/* Job icon */
+.combatant-job {
+  position: relative;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  margin-right: 8px;
+  overflow: hidden;
+  background-image: url('../icons/classes.png');
+  background-size: 1100% 600%;
+  background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.combatant-job--unknown {
+  background-image: none;
+  background: rgba(255,255,255,0.06);
+}
+
+/* Name + crit stats column */
+.combatant-info {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+}
+
+.combatant-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.combatant-secondary {
+  display: flex;
+  gap: 5px;
+  font-size: 9.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.combatant-secondary span {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cs-ch::before  { content: 'CH ';  color: rgba(255,255,255,0.30); }
+.cs-dh::before  { content: 'DH ';  color: rgba(255,255,255,0.30); }
+.cs-cdh::before { content: '!!! '; color: rgba(255,255,255,0.30); }
+
+.cs-ch  { color: #34d399; }
+.cs-dh  { color: #60a5fa; }
+.cs-cdh { color: #fbbf24; }
+
+.blur-names .combatant-name {
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+/* Stats cluster */
+.combatant-stats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+.combatant-primary {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-family: var(--num-font);
+  letter-spacing: -0.02em;
+  /* Wide enough for "99,999.99" */
+  min-width: 72px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.combatant-pct {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  font-family: var(--num-font);
+  min-width: 36px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ── Panels (History & Settings) ──────────────────────────────────────── */
+.history-panel,
+.settings-panel {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-panel);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.history-panel.open,
+.settings-panel.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* ── History List ─────────────────────────────────────────────────────── */
+.history-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.history-item:hover {
+  background: var(--bg-surface-hover);
+}
+
+.history-item.active {
+  background: var(--accent-soft);
+}
+
+.history-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-item-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item-meta {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-top: 1px;
+  font-family: var(--mono);
+}
+
+.history-item-dps {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--mono);
+  flex-shrink: 0;
+}
+
+/* ── Settings Body ────────────────────────────────────────────────────── */
+.settings-body {
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.setting-row:hover {
+  background: var(--bg-surface-hover);
+}
+
+.setting-row--version {
+  cursor: default;
+  margin-top: 4px;
+}
+
+.setting-row--version:hover {
+  background: transparent;
+}
+
+.setting-label {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+/* ── Toggle Switch ────────────────────────────────────────────────────── */
+.toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--bg-bar);
+  border: 1px solid var(--border-strong);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+  flex-shrink: 0;
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), background var(--transition);
+}
+
+.toggle:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.toggle:checked::after {
+  transform: translateX(16px);
+  background: #fff;
+}
+
+/* ── "You" row highlight ──────────────────────────────────────────────── */
+.combatant-row.is-you .combatant-name {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── Text input ───────────────────────────────────────────────────────── */
+.setting-row--input {
+  cursor: default;
+}
+
+.setting-row--input:hover {
+  background: transparent;
+}
+
+.setting-text {
+  appearance: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  caret-color: var(--accent);
+  font-family: var(--font);
+  font-size: 12px;
+  padding: 4px 8px;
+  width: 120px;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.setting-text::placeholder {
+  color: var(--text-tertiary);
+}
+
+.setting-text:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+/* ── Pill group (replaces <select> to avoid ACT/CEF focus-steal flicker) ── */
+.pill-group {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.pill {
+  appearance: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  white-space: nowrap;
+}
+
+.pill:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.pill.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 2px;
+}
+
+/* ── Animations ───────────────────────────────────────────────────────── */
+@keyframes rowIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes encounterFlash {
+  0%   { outline: 2px solid rgba(99,102,241,0);   outline-offset: 0px; }
+  15%  { outline: 2px solid rgba(99,102,241,0.75); outline-offset: 1px; }
+  40%  { outline: 2px solid rgba(99,102,241,0.4);  outline-offset: 1px; }
+  100% { outline: 2px solid rgba(99,102,241,0);   outline-offset: 0px; }
+}
+
+@keyframes headerPulse {
+  0%   { background: var(--bg-surface); }
+  20%  { background: rgba(99,102,241,0.18); }
+  100% { background: var(--bg-surface); }
+}
+
+.combatant-row {
+  animation: rowIn 240ms cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+.app.encounter-end-flash {
+  animation: encounterFlash 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.app.encounter-end-flash .encounter-header {
+  animation: headerPulse 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Responsive width ─────────────────────────────────────────────────── */
+@media (max-width: 320px) {
+  .combatant-pct { display: none; }
+  .encounter-stats { display: none; }
+}
+
+/* Wider overlay — let numbers breathe */
+@media (min-width: 420px) {
+  .combatant-primary { font-size: 13.5px; min-width: 80px; }
+  .combatant-pct     { font-size: 11.5px; }
+  :root              { --row-height: 38px; }
+}

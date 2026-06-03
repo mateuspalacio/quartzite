@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quartzite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/appearances.css" />
+  <link rel="stylesheet" href="css/jobs.css" />
+</head>
+<body>
+  <div id="app" class="app">
+
+    <!-- Header -->
+    <header class="encounter-header" id="encounter-header">
+      <div class="encounter-info">
+        <span class="encounter-zone" id="encounter-zone">Waiting for combat…</span>
+        <span class="encounter-duration" id="encounter-duration"></span>
+      </div>
+      <div class="encounter-stats">
+        <div class="encounter-stat">
+          <span class="encounter-stat-value" id="encounter-rdps">—</span>
+          <span class="encounter-stat-label">rDPS</span>
+        </div>
+        <div class="encounter-stat">
+          <span class="encounter-stat-value" id="encounter-rhps">—</span>
+          <span class="encounter-stat-label">rHPS</span>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button class="icon-btn" id="btn-history" title="History" aria-label="Browse encounter history">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M8 3v5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="btn-settings" title="Settings" aria-label="Open settings">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.54 11.54l1.41 1.41M3.05 12.95l1.42-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mode Tabs -->
+    <nav class="mode-tabs" id="mode-tabs">
+      <button class="tab active" data-mode="dps">DMG</button>
+      <button class="tab" data-mode="hps">HPS</button>
+      <button class="tab" data-mode="tank">TANK</button>
+    </nav>
+
+    <!-- Combatant Table -->
+    <main class="combatant-list" id="combatant-list">
+      <div class="empty-state" id="empty-state">
+        <p>No active encounter</p>
+      </div>
+    </main>
+
+    <!-- History Panel -->
+    <aside class="history-panel" id="history-panel" aria-hidden="true">
+      <div class="panel-header">
+        <span>History</span>
+        <button class="icon-btn" id="btn-history-close" aria-label="Close history">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <ul class="history-list" id="history-list"></ul>
+    </aside>
+
+    <!-- Settings Panel -->
+    <aside class="settings-panel" id="settings-panel" aria-hidden="true">
+      <div class="panel-header">
+        <span>Settings</span>
+        <button class="icon-btn" id="btn-settings-close" aria-label="Close settings">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="settings-body">
+        <div class="setting-row setting-row--input">
+          <span class="setting-label">Your name</span>
+          <input type="text" id="set-your-name" class="setting-text" placeholder="Character name" spellcheck="false" autocomplete="off" />
+        </div>
+        <div class="setting-row setting-row--input">
+          <span class="setting-label">Display as</span>
+          <input type="text" id="set-your-label" class="setting-text" placeholder="YOU" spellcheck="false" autocomplete="off" />
+        </div>
+        <label class="setting-row">
+          <span class="setting-label">Full names</span>
+          <input type="checkbox" id="set-full-names" class="toggle" />
+        </label>
+        <label class="setting-row">
+          <span class="setting-label">Blur names</span>
+          <input type="checkbox" id="set-blur-names" class="toggle" />
+        </label>
+        <label class="setting-row">
+          <span class="setting-label">Merge pets</span>
+          <input type="checkbox" id="set-merge-pets" class="toggle" checked />
+        </label>
+        <label class="setting-row">
+          <span class="setting-label">Show job icons</span>
+          <input type="checkbox" id="set-show-jobs" class="toggle" checked />
+        </label>
+        <div class="setting-row setting-row--input">
+          <span class="setting-label">Players shown</span>
+          <div class="pill-group" id="set-max-rows" role="group">
+            <button class="pill" data-value="8">8</button>
+            <button class="pill" data-value="12">12</button>
+            <button class="pill" data-value="16">16</button>
+            <button class="pill" data-value="24">24</button>
+            <button class="pill" data-value="32">32</button>
+            <button class="pill" data-value="0">All</button>
+          </div>
+        </div>
+        <div class="setting-row setting-row--input">
+          <span class="setting-label">Theme</span>
+          <div class="pill-group" id="set-theme" role="group">
+            <button class="pill" data-value="dark">Dark</button>
+            <button class="pill" data-value="light">Light</button>
+          </div>
+        </div>
+        <div class="setting-row setting-row--input">
+          <span class="setting-label">Appearance</span>
+          <div class="pill-group" id="set-appearance" role="group">
+            <button class="pill" data-value="dynamis">Dynamis</button>
+            <button class="pill" data-value="corgi">Corgi</button>
+            <button class="pill" data-value="shadcn">ShadCN</button>
+          </div>
+        </div>
+        <div class="setting-row setting-row--version">
+          <span class="setting-label" style="color: var(--text-tertiary); font-size: 11px;">Quartzite v0.5 "Twintania"</span>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

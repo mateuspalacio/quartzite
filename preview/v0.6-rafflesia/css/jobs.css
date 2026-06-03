@@ -1,0 +1,36 @@
+/* ── Job Colors ──────────────────────────────────────────────────────── */
+/* Official FFXIV job palette, tuned for dark/glass surfaces */
+
+/* Tanks */
+.job-PLD { --job-color: #a8b4d8; }
+.job-WAR { --job-color: #cf2621; }
+.job-DRK { --job-color: #d126a0; }
+.job-GNB { --job-color: #7c8b72; }
+
+/* Healers */
+.job-WHM { --job-color: #fff0dc; }
+.job-SCH { --job-color: #8657ff; }
+.job-AST { --job-color: #ffe74a; }
+.job-SGE { --job-color: #80a0ff; }
+
+/* Melee DPS */
+.job-MNK { --job-color: #d69c3c; }
+.job-DRG { --job-color: #4164cd; }
+.job-NIN { --job-color: #af1964; }
+.job-SAM { --job-color: #e46d04; }
+.job-RPR { --job-color: #965a96; }
+.job-VPR { --job-color: #108232; }
+
+/* Physical Ranged */
+.job-BRD { --job-color: #91ba5e; }
+.job-MCH { --job-color: #6ee1d6; }
+.job-DNC { --job-color: #e2b0af; }
+
+/* Magical Ranged */
+.job-BLM { --job-color: #a579d6; }
+.job-SMN { --job-color: #2d9b78; }
+.job-RDM { --job-color: #e87b7b; }
+.job-PCT { --job-color: #fc9cd2; }
+
+/* Crafters / Gatherers (rarely in ACT but just in case) */
+.job-DEFAULT { --job-color: #6366f1; }
