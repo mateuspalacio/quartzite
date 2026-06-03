@@ -255,7 +255,9 @@ function renderCombatants(rawEncounter, rawCombatants) {
     'BLM','THM','SMN','ACN','RDM','PCT','BLU',
   ]);
   let players = Object.values(combatants).filter(c =>
-    !!c.name && PLAYER_JOBS.has((c.Job || '').toUpperCase())
+    !!c.name &&
+    PLAYER_JOBS.has((c.Job || '').toUpperCase()) &&
+    (parseFloat(c.damage) > 0 || parseFloat(c.healed) > 0)
   );
   players.sort((a, b) => sortKey(b) - sortKey(a));
   if (maxRows) players = players.slice(0, maxRows);
