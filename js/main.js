@@ -6,7 +6,7 @@ import { jobSpritePos, hasIcon } from './jobicons.js';
 
 // ── Changelog ─────────────────────────────────────────────────────────────
 const CHANGELOG = [
-  { version: 'v0.5', date: '2025-06-03', notes: [
+  { version: 'v0.5 "Twintania"', date: '2025-06-03', notes: [
     'Kagerou sprite sheet for all job icons (consistent gold style)',
     'Boss name shown alongside zone in header',
     'Robust ACT connection polling (no more mock data in overlay)',

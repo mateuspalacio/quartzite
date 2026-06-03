@@ -67,7 +67,7 @@ Only players with a job in the `PLAYER_JOBS` set AND `damage > 0 || healed > 0` 
 
 ## Versioning
 
-**Current version: v0.5 (beta)**
+**Current version: v0.5 "Twintania" (beta)**
 
 The version is displayed in the Settings panel (`index.html`) and in the empty-state changelog (`js/main.js` → `CHANGELOG`).
 
