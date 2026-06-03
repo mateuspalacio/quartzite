@@ -151,6 +151,22 @@ function primaryStat(c) {
   return '—';
 }
 
+function critStats(c) {
+  const swings = parseInt(c.swings) || parseInt(c.hits) || 0;
+  if (!swings) return { ch: '—', dh: '—', cdh: '—' };
+  const pct = n => Math.round((parseInt(n) || 0) / swings * 100) + '%';
+  return {
+    ch:  pct(c.crithits),
+    dh:  pct(c.DirectHitCount),
+    cdh: pct(c.CritDirectHitCount),
+  };
+}
+
+function critHtml(c) {
+  const s = critStats(c);
+  return `<span class="cs-ch">${s.ch}</span><span class="cs-dh">${s.dh}</span><span class="cs-cdh">${s.cdh}</span>`;
+}
+
 function mergePets(combatants) {
   if (!Config.get('mergePets')) return combatants;
   const merged = {};
@@ -205,7 +221,10 @@ function buildRow(c, rank, maxVal) {
     <div class="combatant-bar"></div>
     <span class="combatant-rank ${rank <= 3 ? 'rank-' + rank : ''}">${rank}</span>
     ${iconHtml}
-    <span class="combatant-name">${displayName}</span>
+    <div class="combatant-info">
+      <span class="combatant-name">${displayName}</span>
+      <div class="combatant-secondary">${critHtml(c)}</div>
+    </div>
     <div class="combatant-stats">
       <span class="combatant-pct">${dmgPct}</span>
       <span class="combatant-primary">${primaryStat(c)}</span>
@@ -254,6 +273,7 @@ function renderCombatants(rawEncounter, rawCombatants) {
       row.querySelector('.combatant-name').textContent = isYou ? yourLabel : firstName(c.name);
       row.querySelector('.combatant-primary').textContent = primaryStat(c);
       row.querySelector('.combatant-pct').textContent = fmtPct(c['damage%'] || '0%');
+      row.querySelector('.combatant-secondary').innerHTML = critHtml(c);
       const rankEl = row.querySelector('.combatant-rank');
       rankEl.textContent = i + 1;
       rankEl.className = `combatant-rank${i < 3 ? ' rank-' + (i + 1) : ''}`;
