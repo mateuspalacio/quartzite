@@ -194,4 +194,4 @@ const ACT = (() => {
   return { init, on, off };
 })();
 
-export default ACT;
+// ACT is a global

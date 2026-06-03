@@ -42,4 +42,4 @@ const Config = (() => {
   return { get, set };
 })();
 
-export default Config;
+// Config is a global

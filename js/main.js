@@ -1,9 +1,3 @@
-import ACT                    from './act.js';
-import Config                 from './config.js';
-import History                from './history.js';
-import { fmtDps, fmtPct, firstName } from './format.js';
-import { jobSpritePos, hasIcon } from './jobicons.js';
-
 // ── Changelog ─────────────────────────────────────────────────────────────
 const CHANGELOG = [
   { version: 'v0.5 "Twintania"', date: '2025-06-03', notes: [
