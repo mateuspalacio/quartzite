@@ -1,5 +1,11 @@
 // ── Changelog ─────────────────────────────────────────────────────────────
 const CHANGELOG = [
+  { version: 'v0.6 "Rafflesia"', date: '2025-06-03', notes: [
+    'Appearance system: Dynamis Crystal, Corgi, Alexandrian',
+    'Works over file:// (no local server needed)',
+    'Settings dropdowns replaced with pill buttons (fixes ACT flicker)',
+    'Version history shown on waiting screen',
+  ]},
   { version: 'v0.5 "Twintania"', date: '2025-06-03', notes: [
     'Kagerou sprite sheet for all job icons (consistent gold style)',
     'Boss name shown alongside zone in header',
@@ -50,6 +56,7 @@ function formatDuration(totalSeconds) {
 })();
 
 // ── Boot ──────────────────────────────────────────────────────────────────
+document.getElementById('settings-version').textContent = `Quartzite ${CHANGELOG[0].version}`;
 renderEmptyState();
 ACT.init();
 
