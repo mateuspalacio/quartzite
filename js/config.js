@@ -9,6 +9,7 @@ const DEFAULTS = {
   maxRows:     8,
   theme:       'dark',
   appearance:  'dynamis',  // 'dynamis' | 'corgi' | 'alexandrian'
+  showMascot:  true,
   mode:        'dps',
   yourName:    '',      // character name to highlight
   yourLabel:   'YOU',   // what to display instead

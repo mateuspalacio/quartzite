@@ -63,12 +63,14 @@ ACT.init();
 // ── Apply saved settings ──────────────────────────────────────────────────
 applyTheme(Config.get('theme'));
 applyAppearance(Config.get('appearance'));
+applyMascot(Config.get('showMascot'));
 applyBlur(Config.get('blurNames'));
 applyMaxRows(Config.get('maxRows'));
 
-function applyTheme(t)      { document.documentElement.setAttribute('data-theme', t); }
-function applyAppearance(a) { document.documentElement.setAttribute('data-appearance', a); }
-function applyBlur(v)       { $app.classList.toggle('blur-names', v); }
+function applyTheme(t)       { document.documentElement.setAttribute('data-theme', t); }
+function applyAppearance(a)  { document.documentElement.setAttribute('data-appearance', a); }
+function applyMascot(v)      { $app.classList.toggle('hide-mascot', !v); }
+function applyBlur(v)        { $app.classList.toggle('blur-names', v); }
 function applyMaxRows(n)    { $list.style.setProperty('--max-rows', n || 8); }
 
 // ── Encounter-end flash ───────────────────────────────────────────────────
@@ -130,7 +132,8 @@ const $mergePets  = document.getElementById('set-merge-pets');
 const $showJobs   = document.getElementById('set-show-jobs');
 const $maxRows     = document.getElementById('set-max-rows');
 const $theme       = document.getElementById('set-theme');
-const $appearance  = document.getElementById('set-appearance');
+const $appearance   = document.getElementById('set-appearance');
+const $showMascot   = document.getElementById('set-show-mascot');
 const $yourName   = document.getElementById('set-your-name');
 const $yourLabel  = document.getElementById('set-your-label');
 
@@ -155,7 +158,8 @@ function pillInit(group, savedValue, onChange) {
 $fullNames.checked = Config.get('fullNames');
 $blurNames.checked = Config.get('blurNames');
 $mergePets.checked = Config.get('mergePets');
-$showJobs.checked  = Config.get('showJobs');
+$showJobs.checked     = Config.get('showJobs');
+$showMascot.checked   = Config.get('showMascot');
 $yourName.value    = Config.get('yourName');
 $yourLabel.value   = Config.get('yourLabel');
 pillInit($maxRows,    Config.get('maxRows'),    v => { const n = parseInt(v, 10) || 0; Config.set('maxRows', n); applyMaxRows(n); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
@@ -165,7 +169,8 @@ pillInit($appearance, Config.get('appearance'), v => { Config.set('appearance', 
 $fullNames.addEventListener('change', () => { Config.set('fullNames', $fullNames.checked); saveAndRerender(); });
 $blurNames.addEventListener('change', () => { Config.set('blurNames', $blurNames.checked); applyBlur($blurNames.checked); });
 $mergePets.addEventListener('change', () => { Config.set('mergePets', $mergePets.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
-$showJobs.addEventListener('change',  () => { Config.set('showJobs', $showJobs.checked);   if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+$showJobs.addEventListener('change',    () => { Config.set('showJobs', $showJobs.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+$showMascot.addEventListener('change',  () => { Config.set('showMascot', $showMascot.checked); applyMascot($showMascot.checked); });
 
 function saveAndRerender() { if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); }
 $yourName.addEventListener('input',  () => { Config.set('yourName',  $yourName.value.trim());  saveAndRerender(); });
