@@ -2,7 +2,7 @@ import ACT                    from './act.js';
 import Config                 from './config.js';
 import History                from './history.js';
 import { fmtDps, fmtPct, firstName } from './format.js';
-import { jobIconSrc, hasIcon } from './jobicons.js';
+import { jobSpritePos, hasIcon } from './jobicons.js';
 
 // ── DOM refs ──────────────────────────────────────────────────────────────
 const $app           = document.getElementById('app');
@@ -216,9 +216,10 @@ function buildRow(c, rank, maxVal) {
   // Bar starts at 0; double-rAF lets the element paint before transitioning
   row.style.setProperty('--bar-pct', '0%');
 
-  const iconHtml = showJobs
-    ? `<div class="combatant-job" title="${job}"><img src="${jobIconSrc(job)}" alt="${job}" loading="lazy" /></div>`
-    : '';
+  const spritePos = jobSpritePos(job);
+  const iconHtml = showJobs && spritePos
+    ? `<div class="combatant-job" title="${job}" style="background-position:${spritePos}"></div>`
+    : (showJobs ? `<div class="combatant-job combatant-job--unknown" title="${job}"></div>` : '');
 
   row.innerHTML = `
     <div class="combatant-bar"></div>

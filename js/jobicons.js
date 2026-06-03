@@ -1,47 +1,51 @@
 /**
- * Job icon resolver using Kagerou-style PNG icons.
- * Files live at icons/jobs/<lowercase>.png
+ * Kagerou sprite-based job icon resolver.
+ * Single sprite: icons/classes.png (11×6 grid, same file as Kagerou share/img/classes.png)
+ * background-size: 1100% 600% → each cell is selected by background-position.
  */
 
-// Maps ACT job strings (uppercase) → icon filename (lowercase)
-// Handles both base classes and advanced jobs
-const JOB_MAP = {
-  // Tanks
-  PLD: 'pld', GLA: 'gla',
-  WAR: 'war', MRD: 'mrd',
-  DRK: 'drk',
-  GNB: 'gnb',
-  // Healers
-  WHM: 'whm', CNJ: 'cnj',
-  SCH: 'sch',
-  AST: 'ast',
-  SGE: 'sge',
-  // Melee
-  MNK: 'mnk', PGL: 'pgl',
-  DRG: 'drg', LNC: 'lnc',
-  NIN: 'nin', ROG: 'rog',
-  SAM: 'sam',
-  RPR: 'rpr',
-  VPR: 'vpr',
-  // Physical Ranged
-  BRD: 'brd', ARC: 'arc',
-  MCH: 'mch',
-  DNC: 'dnc',
-  // Magical Ranged
-  BLM: 'blm', THM: 'thm',
-  SMN: 'smn', ACN: 'acn',
-  RDM: 'rdm',
-  PCT: 'pct',
-  // Blue Mage
-  BLU: 'blu',
+const SPRITE = {
+  // Row 0%
+  GLA: '0% 0%',   GLD: '0% 0%',
+  MRD: '10% 0%',
+  PGL: '20% 0%',
+  LNC: '30% 0%',
+  ROG: '40% 0%',
+  ARC: '50% 0%',
+  THM: '60% 0%',
+  ACN: '70% 0%',
+  CNJ: '90% 0%',
+  // Row 20%
+  PLD: '0% 20%',
+  WAR: '10% 20%',
+  MNK: '20% 20%',
+  DRG: '30% 20%',
+  NIN: '40% 20%',
+  BRD: '50% 20%',
+  BLM: '60% 20%',
+  SMN: '70% 20%',
+  SCH: '80% 20%',
+  WHM: '90% 20%',
+  // Row 40%
+  DRK: '0% 40%',
+  MCH: '10% 40%',
+  AST: '20% 40%',
+  SAM: '30% 40%',
+  RDM: '40% 40%',
+  BLU: '50% 40%',
+  GNB: '60% 40%',
+  DNC: '70% 40%',
+  RPR: '80% 40%',
+  SGE: '90% 40%',
+  // Row 100%
+  VPR: '30% 100%',
+  PCT: '40% 100%',
 };
 
-export function jobIconSrc(job) {
-  const key = (job || '').toUpperCase();
-  const file = JOB_MAP[key];
-  return file ? `icons/jobs/${file}.png` : 'icons/placeholder.png';
+export function jobSpritePos(job) {
+  return SPRITE[(job || '').toUpperCase()] || null;
 }
 
 export function hasIcon(job) {
-  return (job || '').toUpperCase() in JOB_MAP;
+  return (job || '').toUpperCase() in SPRITE;
 }

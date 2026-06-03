@@ -302,21 +302,17 @@ body {
   border-radius: 5px;
   flex-shrink: 0;
   margin-right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  background: rgba(255,255,255,0.06);
-}
-
-.combatant-job img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  background-image: url('../icons/classes.png');
+  background-size: 1100% 600%;
+  background-repeat: no-repeat;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  /* Unify icon styles: strip original color, apply consistent warm-gold tint */
-  filter: grayscale(1) brightness(1.6) sepia(0.6) saturate(3) hue-rotate(5deg);
+}
+
+.combatant-job--unknown {
+  background-image: none;
+  background: rgba(255,255,255,0.06);
 }
 
 /* Name + crit stats column */
@@ -348,6 +344,13 @@ body {
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.01em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.combatant-secondary span {
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .cs-ch::before  { content: 'CH ';  color: rgba(255,255,255,0.30); }
