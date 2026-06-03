@@ -130,21 +130,36 @@ const $theme      = document.getElementById('set-theme');
 const $yourName   = document.getElementById('set-your-name');
 const $yourLabel  = document.getElementById('set-your-label');
 
+// ── Pill group helpers ────────────────────────────────────────────────────
+function pillSelect(group, value) {
+  group.querySelectorAll('.pill').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.value === String(value));
+  });
+}
+
+function pillInit(group, savedValue, onChange) {
+  pillSelect(group, savedValue);
+  group.querySelectorAll('.pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      pillSelect(group, btn.dataset.value);
+      onChange(btn.dataset.value);
+    });
+  });
+}
+
 $fullNames.checked = Config.get('fullNames');
 $blurNames.checked = Config.get('blurNames');
 $mergePets.checked = Config.get('mergePets');
 $showJobs.checked  = Config.get('showJobs');
-$maxRows.value     = Config.get('maxRows');
-$theme.value       = Config.get('theme');
 $yourName.value    = Config.get('yourName');
 $yourLabel.value   = Config.get('yourLabel');
+pillInit($maxRows, Config.get('maxRows'), v => { const n = parseInt(v, 10) || 0; Config.set('maxRows', n); applyMaxRows(n); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+pillInit($theme,   Config.get('theme'),   v => { Config.set('theme', v); applyTheme(v); });
 
 $fullNames.addEventListener('change', () => { Config.set('fullNames', $fullNames.checked); saveAndRerender(); });
 $blurNames.addEventListener('change', () => { Config.set('blurNames', $blurNames.checked); applyBlur($blurNames.checked); });
 $mergePets.addEventListener('change', () => { Config.set('mergePets', $mergePets.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
 $showJobs.addEventListener('change',  () => { Config.set('showJobs', $showJobs.checked);   if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
-$maxRows.addEventListener('change',   () => { const n = parseInt($maxRows.value, 10) || 0; Config.set('maxRows', n); applyMaxRows(n); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
-$theme.addEventListener('change',     () => { Config.set('theme', $theme.value); applyTheme($theme.value); });
 
 function saveAndRerender() { if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); }
 $yourName.addEventListener('input',  () => { Config.set('yourName',  $yourName.value.trim());  saveAndRerender(); });

@@ -107,24 +107,24 @@
           <span class="setting-label">Show job icons</span>
           <input type="checkbox" id="set-show-jobs" class="toggle" checked />
         </label>
-        <label class="setting-row">
+        <div class="setting-row setting-row--input">
           <span class="setting-label">Max rows</span>
-          <select id="set-max-rows" class="setting-select">
-            <option value="8" selected>8</option>
-            <option value="12">12</option>
-            <option value="16">16</option>
-            <option value="24">24</option>
-            <option value="32">32</option>
-            <option value="0">All</option>
-          </select>
-        </label>
-        <label class="setting-row">
+          <div class="pill-group" id="set-max-rows" role="group">
+            <button class="pill" data-value="8">8</button>
+            <button class="pill" data-value="12">12</button>
+            <button class="pill" data-value="16">16</button>
+            <button class="pill" data-value="24">24</button>
+            <button class="pill" data-value="32">32</button>
+            <button class="pill" data-value="0">All</button>
+          </div>
+        </div>
+        <div class="setting-row setting-row--input">
           <span class="setting-label">Theme</span>
-          <select id="set-theme" class="setting-select">
-            <option value="dark" selected>Dark</option>
-            <option value="light">Light</option>
-          </select>
-        </label>
+          <div class="pill-group" id="set-theme" role="group">
+            <button class="pill" data-value="dark">Dark</button>
+            <button class="pill" data-value="light">Light</button>
+          </div>
+        </div>
         <div class="setting-row setting-row--version">
           <span class="setting-label" style="color: var(--text-tertiary); font-size: 11px;">Quartzite v0.5 "Twintania"</span>
         </div>
