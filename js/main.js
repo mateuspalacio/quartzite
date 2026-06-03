@@ -332,6 +332,14 @@ ACT.on('ChangeZone', () => {
   lastData = null;
 });
 
+function isNewEncounter(enc) {
+  if (!lastData) return false;
+  const prev = lastData.Encounter;
+  // Zone changed, or DURATION timer reset backwards (new pull) — same logic as Kagerou
+  return prev.CurrentZoneName !== enc.CurrentZoneName
+      || parseInt(prev.DURATION) > parseInt(enc.DURATION);
+}
+
 ACT.on('CombatData', data => {
   const wasActive = lastData?.isActive === 'true';
   const nowActive = data.isActive === 'true';
@@ -341,7 +349,15 @@ ACT.on('CombatData', data => {
     flashEncounterEnd();
   }
 
-  // New fight starting — always break out of any frozen history view
+  // New encounter detected (zone change or timer reset) — clear stale display
+  if (lastData && isNewEncounter(data.Encounter)) {
+    clearHistorySelection();
+    $list.innerHTML = '';
+    $empty.style.display = 'block';
+    timerActive = false;
+  }
+
+  // New fight starting — break out of any frozen history view
   if (!wasActive && nowActive) {
     clearHistorySelection();
   }

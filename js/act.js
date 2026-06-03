@@ -35,8 +35,6 @@ const ACT = (() => {
     let raw = params.get('OVERLAY_WS') || params.get('HOST_PORT') || '';
 
     // Normalise to a full ws:// URL ending in /ws
-    // HOST_PORT arrives as:  "127.0.0.1:10501"  or  "ws://127.0.0.1:10501"
-    // OVERLAY_WS arrives as: "ws://127.0.0.1:10501/ws"  (already correct)
     let url;
     if (!raw) {
       url = 'ws://127.0.0.1:10501/ws';
@@ -55,27 +53,40 @@ const ACT = (() => {
     console.info('[Quartzite] WebSocket ->', url);
 
     const socket = new WebSocket(url);
+    let heartbeatTimer = null;
+
+    // If IINACT goes silent (zombie connection — open but no messages),
+    // force-close so the 'close' handler reconnects.
+    function resetHeartbeat() {
+      clearTimeout(heartbeatTimer);
+      heartbeatTimer = setTimeout(() => {
+        console.warn('[Quartzite] No data for 30s — reconnecting');
+        socket.close();
+      }, 30000);
+    }
 
     socket.addEventListener('open', () => {
-      // ngld OverlayPlugin subscribe call (harmless if server ignores it)
       socket.send(JSON.stringify({
         call: 'subscribe',
         events: ['CombatData', 'ChangeZone', 'LogLine'],
       }));
+      resetHeartbeat();
     });
 
     socket.addEventListener('message', e => {
+      resetHeartbeat();
       try {
         const msg = JSON.parse(e.data);
-        // Modern ngld format: { type: "CombatData", Encounter: {}, ... }
         if (msg.type) { emit(msg.type, msg); return; }
-        // Legacy ACTWebSocket broadcast: { type:"broadcast", msgtype:"CombatData", msg:{} }
         if (msg.msgtype) emit(msg.msgtype, msg.msg || msg);
       } catch { /* malformed packet */ }
     });
 
-    socket.addEventListener('close', () => { setTimeout(connectLegacy, 5000); });
-    socket.addEventListener('error', () => { /* close fires after, will retry */ });
+    socket.addEventListener('close', () => {
+      clearTimeout(heartbeatTimer);
+      setTimeout(connectLegacy, 3000);
+    });
+    socket.addEventListener('error', () => { /* close fires after */ });
   }
 
   // ── Mock data for browser dev ─────────────────────────────────────────
