@@ -245,7 +245,17 @@ function renderCombatants(rawEncounter, rawCombatants) {
   const combatants = mergePets(rawCombatants);
   const maxRows    = Config.get('maxRows') || Infinity;
 
-  let players = Object.values(combatants).filter(c => !!c.name);
+  // Filter to player combatants only — ACT includes bosses/NPCs which have no job
+  const PLAYER_JOBS = new Set([
+    'PLD','GLA','WAR','MRD','DRK','GNB',
+    'WHM','CNJ','SCH','AST','SGE',
+    'MNK','PGL','DRG','LNC','NIN','ROG','SAM','RPR','VPR',
+    'BRD','ARC','MCH','DNC',
+    'BLM','THM','SMN','ACN','RDM','PCT','BLU',
+  ]);
+  let players = Object.values(combatants).filter(c =>
+    !!c.name && PLAYER_JOBS.has((c.Job || '').toUpperCase())
+  );
   players.sort((a, b) => sortKey(b) - sortKey(a));
   if (maxRows) players = players.slice(0, maxRows);
 
