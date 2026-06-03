@@ -681,6 +681,7 @@ body {
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
+  caret-color: var(--accent);
   font-family: var(--font);
   font-size: 12px;
   padding: 4px 8px;
