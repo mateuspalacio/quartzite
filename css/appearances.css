@@ -42,8 +42,8 @@
   filter: sepia(0.4);
 }
 
-/* ── ShadCN ───────────────────────────────────────────────────────────── */
-[data-appearance="shadcn"] {
+/* ── Alexandrian ──────────────────────────────────────────────────────── */
+[data-appearance="alexandrian"] {
   --accent:           #ffffff;
   --accent-soft:      rgba(255, 255, 255, 0.10);
   --accent-glow:      rgba(255, 255, 255, 0.15);
@@ -68,20 +68,20 @@
 }
 
 /* ShadCN: no frosted glass, solid border */
-[data-appearance="shadcn"] .app {
+[data-appearance="alexandrian"] .app {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-color: var(--border-strong);
 }
 
 /* ShadCN: flat bars, no gradient softness */
-[data-appearance="shadcn"] .combatant-bar {
+[data-appearance="alexandrian"] .combatant-bar {
   opacity: 0.12;
   background: var(--job-color, var(--accent));
   border-radius: 0;
 }
 
 /* ShadCN: rank accent becomes zinc */
-[data-appearance="shadcn"] .combatant-rank.rank-1 { color: #fafafa; }
-[data-appearance="shadcn"] .combatant-rank.rank-2 { color: #a1a1aa; }
-[data-appearance="shadcn"] .combatant-rank.rank-3 { color: #71717a; }
+[data-appearance="alexandrian"] .combatant-rank.rank-1 { color: #fafafa; }
+[data-appearance="alexandrian"] .combatant-rank.rank-2 { color: #a1a1aa; }
+[data-appearance="alexandrian"] .combatant-rank.rank-3 { color: #71717a; }
