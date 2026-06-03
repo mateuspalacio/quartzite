@@ -198,13 +198,13 @@ function buildRow(c, rank, maxVal) {
   const job      = (c.Job || 'DEFAULT').toUpperCase();
   const showJobs = Config.get('showJobs');
 
-  // "You" highlighting — match full name or first name
+  // "You" highlighting — ACT literal "YOU", or match configured name
   const yourName  = Config.get('yourName').toLowerCase();
   const yourLabel = Config.get('yourLabel') || 'YOU';
-  const isYou     = yourName && (
+  const isYou     = c.name === 'YOU' || (yourName && (
     c.name.toLowerCase() === yourName ||
     firstName(c.name).toLowerCase() === yourName
-  );
+  ));
   const displayName = isYou ? yourLabel : firstName(c.name);
 
   const row = document.createElement('div');
@@ -263,10 +263,10 @@ function renderCombatants(rawEncounter, rawCombatants) {
       const row = existing[c.name];
       const yourName  = Config.get('yourName').toLowerCase();
       const yourLabel = Config.get('yourLabel') || 'YOU';
-      const isYou     = yourName && (
+      const isYou     = c.name === 'YOU' || (yourName && (
         c.name.toLowerCase() === yourName ||
         firstName(c.name).toLowerCase() === yourName
-      );
+      ));
       row.classList.toggle('is-you', isYou);
       row.style.order = i;
       row.style.setProperty('--bar-pct', `${newPct}%`);
