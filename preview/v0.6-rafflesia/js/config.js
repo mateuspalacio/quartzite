@@ -8,7 +8,7 @@ const DEFAULTS = {
   showJobs:    true,
   maxRows:     8,
   theme:       'dark',
-  appearance:  'dynamis',
+  appearance:  'dynamis',  // 'dynamis' | 'corgi' | 'alexandrian'
   mode:        'dps',
   yourName:    '',      // character name to highlight
   yourLabel:   'YOU',   // what to display instead
