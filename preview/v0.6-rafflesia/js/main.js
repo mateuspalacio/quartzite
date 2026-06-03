@@ -141,6 +141,7 @@ function pillSelect(group, value) {
 }
 
 function pillInit(group, savedValue, onChange) {
+  if (!group) return;
   pillSelect(group, savedValue);
   group.querySelectorAll('.pill').forEach(btn => {
     btn.addEventListener('click', () => {
