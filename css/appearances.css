@@ -8,8 +8,6 @@
 /* ── Dynamis Crystal (default) ───────────────────────────────────────── */
 /* Uses base :root variables — no overrides needed.                        */
 
-/* Mascot placeholder — drop your image in icons/dynamis-mascot.png */
-/*
 [data-appearance="dynamis"] .app::after {
   content: '';
   position: absolute;
@@ -25,7 +23,6 @@
   pointer-events: none;
   z-index: 0;
 }
-*/
 
 /* ── Corgi ────────────────────────────────────────────────────────────── */
 [data-appearance="corgi"] {
@@ -106,8 +103,6 @@
   border-radius: 0;
 }
 
-/* Mascot placeholder — drop your image in icons/alexandrian-mascot.png */
-/*
 [data-appearance="alexandrian"] .app::after {
   content: '';
   position: absolute;
@@ -123,7 +118,6 @@
   pointer-events: none;
   z-index: 0;
 }
-*/
 
 /* Alexandrian: rank accent becomes zinc */
 [data-appearance="alexandrian"] .combatant-rank.rank-1 { color: #fafafa; }
