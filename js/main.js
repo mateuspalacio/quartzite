@@ -306,7 +306,9 @@ function renderCombatants(rawEncounter, rawCombatants) {
 }
 
 function renderHeader(encounter, isActive) {
-  $zone.textContent = encounter.CurrentZoneName || encounter.title || 'Unknown Zone';
+  const zone = encounter.CurrentZoneName || 'Unknown Zone';
+  const boss = encounter.title && encounter.title !== zone ? encounter.title : '';
+  $zone.textContent = boss ? `${zone} — ${boss}` : zone;
   $rdps.textContent = fmtDps(encounter.encdps);
   $rhps.textContent = fmtDps(encounter.enchps);
 
