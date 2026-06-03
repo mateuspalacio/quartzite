@@ -239,10 +239,91 @@ body {
 }
 
 .empty-state {
-  padding: 24px 0;
-  text-align: center;
+  padding: 12px 8px 16px;
+}
+
+/* ── Changelog (empty state) ──────────────────────────────────────────── */
+.changelog {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.changelog-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.changelog-beta {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 1px 5px;
+  vertical-align: middle;
+}
+
+.changelog-subtitle {
+  font-size: 11px;
   color: var(--text-tertiary);
-  font-size: 12px;
+  margin-top: -6px;
+}
+
+.changelog-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.changelog-entry {
+  border-left: 2px solid var(--border-strong);
+  padding-left: 10px;
+}
+
+.changelog-version {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.changelog-ver {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
+.changelog-date {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-family: var(--mono);
+}
+
+.changelog-notes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.changelog-notes li {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.changelog-notes li::before {
+  content: '· ';
+  color: var(--text-tertiary);
 }
 
 /* ── Combatant Row ────────────────────────────────────────────────────── */

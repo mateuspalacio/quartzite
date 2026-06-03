@@ -4,6 +4,16 @@ import History                from './history.js';
 import { fmtDps, fmtPct, firstName } from './format.js';
 import { jobSpritePos, hasIcon } from './jobicons.js';
 
+// ── Changelog ─────────────────────────────────────────────────────────────
+const CHANGELOG = [
+  { version: 'v0.5', date: '2025-06-03', notes: [
+    'Kagerou sprite sheet for all job icons (consistent gold style)',
+    'Boss name shown alongside zone in header',
+    'Robust ACT connection polling (no more mock data in overlay)',
+    'Filter out zero-damage/NPC combatants',
+  ]},
+];
+
 // ── DOM refs ──────────────────────────────────────────────────────────────
 const $app           = document.getElementById('app');
 const $zone          = document.getElementById('encounter-zone');
@@ -46,6 +56,7 @@ function formatDuration(totalSeconds) {
 })();
 
 // ── Boot ──────────────────────────────────────────────────────────────────
+renderEmptyState();
 ACT.init();
 
 // ── Apply saved settings ──────────────────────────────────────────────────
@@ -242,6 +253,29 @@ function buildRow(c, rank, maxVal) {
   return row;
 }
 
+function renderEmptyState() {
+  const latest = CHANGELOG[0];
+  $empty.innerHTML = `
+    <div class="changelog">
+      <div class="changelog-title">Quartzite <span class="changelog-beta">BETA</span></div>
+      <div class="changelog-subtitle">Waiting for combat…</div>
+      <div class="changelog-entries">
+        ${CHANGELOG.map(entry => `
+          <div class="changelog-entry">
+            <div class="changelog-version">
+              <span class="changelog-ver">${entry.version}</span>
+              <span class="changelog-date">${entry.date}</span>
+            </div>
+            <ul class="changelog-notes">
+              ${entry.notes.map(n => `<li>${n}</li>`).join('')}
+            </ul>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
 function renderCombatants(rawEncounter, rawCombatants) {
   const combatants = mergePets(rawCombatants);
   const maxRows    = Config.get('maxRows') || Infinity;
@@ -304,7 +338,12 @@ function renderCombatants(rawEncounter, rawCombatants) {
   // Remove players no longer in the list
   Object.keys(existing).forEach(name => { if (!seen.has(name)) existing[name].remove(); });
 
-  $empty.style.display = players.length ? 'none' : 'block';
+  if (players.length) {
+    $empty.style.display = 'none';
+  } else {
+    renderEmptyState();
+    $empty.style.display = 'block';
+  }
 }
 
 function renderHeader(encounter, isActive) {
@@ -366,6 +405,7 @@ ACT.on('ChangeZone', () => {
   $rhps.textContent = '—';
   timerActive = false;
   $list.innerHTML = '';
+  renderEmptyState();
   $empty.style.display = 'block';
   lastData = null;
 });
