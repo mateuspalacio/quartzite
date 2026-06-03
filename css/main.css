@@ -315,6 +315,8 @@ body {
   object-fit: contain;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  /* Unify icon styles: strip original color, apply consistent warm-gold tint */
+  filter: grayscale(1) brightness(1.6) sepia(0.6) saturate(3) hue-rotate(5deg);
 }
 
 /* Name + crit stats column */

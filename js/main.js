@@ -110,6 +110,7 @@ document.getElementById('btn-settings-close').addEventListener('click', () => {
 });
 
 // ── Settings controls ─────────────────────────────────────────────────────
+const $fullNames  = document.getElementById('set-full-names');
 const $blurNames  = document.getElementById('set-blur-names');
 const $mergePets  = document.getElementById('set-merge-pets');
 const $showJobs   = document.getElementById('set-show-jobs');
@@ -118,6 +119,7 @@ const $theme      = document.getElementById('set-theme');
 const $yourName   = document.getElementById('set-your-name');
 const $yourLabel  = document.getElementById('set-your-label');
 
+$fullNames.checked = Config.get('fullNames');
 $blurNames.checked = Config.get('blurNames');
 $mergePets.checked = Config.get('mergePets');
 $showJobs.checked  = Config.get('showJobs');
@@ -126,6 +128,7 @@ $theme.value       = Config.get('theme');
 $yourName.value    = Config.get('yourName');
 $yourLabel.value   = Config.get('yourLabel');
 
+$fullNames.addEventListener('change', () => { Config.set('fullNames', $fullNames.checked); saveAndRerender(); });
 $blurNames.addEventListener('change', () => { Config.set('blurNames', $blurNames.checked); applyBlur($blurNames.checked); });
 $mergePets.addEventListener('change', () => { Config.set('mergePets', $mergePets.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
 $showJobs.addEventListener('change',  () => { Config.set('showJobs', $showJobs.checked);   if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
@@ -205,7 +208,7 @@ function buildRow(c, rank, maxVal) {
     c.name.toLowerCase() === yourName ||
     firstName(c.name).toLowerCase() === yourName
   ));
-  const displayName = isYou ? yourLabel : firstName(c.name);
+  const displayName = isYou ? yourLabel : (Config.get('fullNames') ? c.name : firstName(c.name));
 
   const row = document.createElement('div');
   row.className = `combatant-row job-${job}${isYou ? ' is-you' : ''}`;
@@ -270,7 +273,7 @@ function renderCombatants(rawEncounter, rawCombatants) {
       row.classList.toggle('is-you', isYou);
       row.style.order = i;
       row.style.setProperty('--bar-pct', `${newPct}%`);
-      row.querySelector('.combatant-name').textContent = isYou ? yourLabel : firstName(c.name);
+      row.querySelector('.combatant-name').textContent = isYou ? yourLabel : (Config.get('fullNames') ? c.name : firstName(c.name));
       row.querySelector('.combatant-primary').textContent = primaryStat(c);
       row.querySelector('.combatant-pct').textContent = fmtPct(c['damage%'] || '0%');
       row.querySelector('.combatant-secondary').innerHTML = critHtml(c);
