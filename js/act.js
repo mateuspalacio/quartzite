@@ -175,8 +175,8 @@ const ACT = (() => {
         if (typeof window.addOverlayListener === 'function') {
           connectModern();
         } else {
-          console.info('[Quartzite] No ACT detected — running mock data');
-          connectMock();
+          console.info('[Quartzite] No ACT detected — waiting for combat');
+          // connectMock(); // uncomment locally for UI dev
         }
       }, 300);
     }
