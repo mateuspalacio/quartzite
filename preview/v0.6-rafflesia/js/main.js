@@ -127,6 +127,7 @@ document.getElementById('btn-settings-close').addEventListener('click', () => {
 
 // ── Settings controls ─────────────────────────────────────────────────────
 const $fullNames  = document.getElementById('set-full-names');
+const $capsNames  = document.getElementById('set-caps-names');
 const $blurNames  = document.getElementById('set-blur-names');
 const $mergePets  = document.getElementById('set-merge-pets');
 const $showJobs   = document.getElementById('set-show-jobs');
@@ -156,6 +157,7 @@ function pillInit(group, savedValue, onChange) {
 }
 
 $fullNames.checked = Config.get('fullNames');
+$capsNames.checked = Config.get('capsNames');
 $blurNames.checked = Config.get('blurNames');
 $mergePets.checked = Config.get('mergePets');
 $showJobs.checked     = Config.get('showJobs');
@@ -167,6 +169,7 @@ pillInit($theme,      Config.get('theme'),      v => { Config.set('theme', v); a
 pillInit($appearance, Config.get('appearance'), v => { Config.set('appearance', v); applyAppearance(v); });
 
 $fullNames.addEventListener('change', () => { Config.set('fullNames', $fullNames.checked); saveAndRerender(); });
+$capsNames.addEventListener('change', () => { Config.set('capsNames', $capsNames.checked); saveAndRerender(); });
 $blurNames.addEventListener('change', () => { Config.set('blurNames', $blurNames.checked); applyBlur($blurNames.checked); });
 $mergePets.addEventListener('change', () => { Config.set('mergePets', $mergePets.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
 $showJobs.addEventListener('change',    () => { Config.set('showJobs', $showJobs.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
@@ -245,7 +248,8 @@ function buildRow(c, rank, maxVal) {
     c.name.toLowerCase() === yourName ||
     firstName(c.name).toLowerCase() === yourName
   ));
-  const displayName = isYou ? yourLabel : (Config.get('fullNames') ? c.name : firstName(c.name));
+  const rawName = isYou ? yourLabel : (Config.get('fullNames') ? c.name : firstName(c.name));
+  const displayName = Config.get('capsNames') ? rawName.toUpperCase() : rawName;
 
   const row = document.createElement('div');
   row.className = `combatant-row job-${job}${isYou ? ' is-you' : ''}`;
@@ -346,7 +350,8 @@ function renderCombatants(rawEncounter, rawCombatants) {
       row.classList.toggle('is-you', isYou);
       row.style.order = i;
       row.style.setProperty('--bar-pct', `${newPct}%`);
-      row.querySelector('.combatant-name').textContent = isYou ? yourLabel : (Config.get('fullNames') ? c.name : firstName(c.name));
+      const rawN = isYou ? yourLabel : (Config.get('fullNames') ? c.name : firstName(c.name));
+      row.querySelector('.combatant-name').textContent = Config.get('capsNames') ? rawN.toUpperCase() : rawN;
       row.querySelector('.combatant-primary').textContent = primaryStat(c);
       row.querySelector('.combatant-pct').textContent = fmtPct(c['damage%'] || '0%');
       row.querySelector('.combatant-secondary').innerHTML = critHtml(c);
