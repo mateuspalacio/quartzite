@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/appearances.css" />
   <link rel="stylesheet" href="css/jobs.css" />
 </head>
 <body>
@@ -29,6 +30,11 @@
           <span class="encounter-stat-label">rHPS</span>
         </div>
       </div>
+      <nav class="mode-tabs" id="mode-tabs">
+        <button class="tab active" data-mode="dps">DMG</button>
+        <button class="tab" data-mode="hps">HPS</button>
+        <button class="tab" data-mode="tank">TNK</button>
+      </nav>
       <div class="header-controls">
         <button class="icon-btn" id="btn-history" title="History" aria-label="Browse encounter history">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -44,13 +50,6 @@
         </button>
       </div>
     </header>
-
-    <!-- Mode Tabs -->
-    <nav class="mode-tabs" id="mode-tabs">
-      <button class="tab active" data-mode="dps">DMG</button>
-      <button class="tab" data-mode="hps">HPS</button>
-      <button class="tab" data-mode="tank">TANK</button>
-    </nav>
 
     <!-- Combatant Table -->
     <main class="combatant-list" id="combatant-list">
@@ -96,6 +95,19 @@
           <input type="checkbox" id="set-full-names" class="toggle" />
         </label>
         <label class="setting-row">
+          <span class="setting-label">Caps names</span>
+          <input type="checkbox" id="set-caps-names" class="toggle" />
+        </label>
+        <div class="setting-row setting-row--input">
+          <span class="setting-label">Font size</span>
+          <div class="pill-group" id="set-font-size" role="group">
+            <button class="pill" data-value="sm">S</button>
+            <button class="pill" data-value="md">M</button>
+            <button class="pill" data-value="lg">L</button>
+            <button class="pill" data-value="xl">XL</button>
+          </div>
+        </div>
+        <label class="setting-row">
           <span class="setting-label">Blur names</span>
           <input type="checkbox" id="set-blur-names" class="toggle" />
         </label>
@@ -125,14 +137,31 @@
             <button class="pill" data-value="light">Light</button>
           </div>
         </div>
+        <div class="setting-row setting-row--input">
+          <span class="setting-label">Appearance</span>
+          <div class="pill-group" id="set-appearance" role="group">
+            <button class="pill" data-value="dynamis">Dynamis</button>
+            <button class="pill" data-value="corgi">Corgi</button>
+            <button class="pill" data-value="alexandrian">Alexandrian</button>
+          </div>
+        </div>
+        <label class="setting-row">
+          <span class="setting-label">Show mascot</span>
+          <input type="checkbox" id="set-show-mascot" class="toggle" checked />
+        </label>
         <div class="setting-row setting-row--version">
-          <span class="setting-label" style="color: var(--text-tertiary); font-size: 11px;">Quartzite v0.5 "Twintania"</span>
+          <span class="setting-label" id="settings-version" style="color: var(--text-tertiary); font-size: 11px;"></span>
         </div>
       </div>
     </aside>
 
   </div>
 
-<script type="module" src="js/main.js"></script>
+<script src="js/format.js"></script>
+<script src="js/config.js"></script>
+<script src="js/history.js"></script>
+<script src="js/jobicons.js"></script>
+<script src="js/act.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>

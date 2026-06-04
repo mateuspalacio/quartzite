@@ -1,11 +1,11 @@
-import ACT                    from './act.js';
-import Config                 from './config.js';
-import History                from './history.js';
-import { fmtDps, fmtPct, firstName } from './format.js';
-import { jobSpritePos, hasIcon } from './jobicons.js';
-
 // ── Changelog ─────────────────────────────────────────────────────────────
 const CHANGELOG = [
+  { version: 'v0.6 "Rafflesia"', date: '2025-06-03', notes: [
+    'Appearance system: Dynamis Crystal, Corgi, Alexandrian',
+    'Works over file:// (no local server needed)',
+    'Settings dropdowns replaced with pill buttons (fixes ACT flicker)',
+    'Version history shown on waiting screen',
+  ]},
   { version: 'v0.5 "Twintania"', date: '2025-06-03', notes: [
     'Kagerou sprite sheet for all job icons (consistent gold style)',
     'Boss name shown alongside zone in header',
@@ -56,17 +56,26 @@ function formatDuration(totalSeconds) {
 })();
 
 // ── Boot ──────────────────────────────────────────────────────────────────
+document.getElementById('settings-version').textContent = `Quartzite ${CHANGELOG[0].version}`;
 renderEmptyState();
 ACT.init();
 
 // ── Apply saved settings ──────────────────────────────────────────────────
 applyTheme(Config.get('theme'));
+applyAppearance(Config.get('appearance'));
+applyMascot(Config.get('showMascot'));
+applyCaps(Config.get('capsNames'));
+applyFontSize(Config.get('fontSize'));
 applyBlur(Config.get('blurNames'));
 applyMaxRows(Config.get('maxRows'));
 
-function applyTheme(t)    { document.documentElement.setAttribute('data-theme', t); }
-function applyBlur(v)     { $app.classList.toggle('blur-names', v); }
-function applyMaxRows(n)  { $list.style.setProperty('--max-rows', n || 8); }
+function applyTheme(t)       { document.documentElement.setAttribute('data-theme', t); }
+function applyAppearance(a)  { document.documentElement.setAttribute('data-appearance', a); }
+function applyMascot(v)      { $app.classList.toggle('hide-mascot', !v); }
+function applyCaps(v)        { $app.classList.toggle('caps-names', v); }
+function applyFontSize(v)    { document.documentElement.setAttribute('data-fontsize', v); }
+function applyBlur(v)        { $app.classList.toggle('blur-names', v); }
+function applyMaxRows(n)    { $list.style.setProperty('--max-rows', n || 8); }
 
 // ── Encounter-end flash ───────────────────────────────────────────────────
 function flashEncounterEnd() {
@@ -122,11 +131,15 @@ document.getElementById('btn-settings-close').addEventListener('click', () => {
 
 // ── Settings controls ─────────────────────────────────────────────────────
 const $fullNames  = document.getElementById('set-full-names');
+const $capsNames  = document.getElementById('set-caps-names');
 const $blurNames  = document.getElementById('set-blur-names');
 const $mergePets  = document.getElementById('set-merge-pets');
 const $showJobs   = document.getElementById('set-show-jobs');
-const $maxRows    = document.getElementById('set-max-rows');
-const $theme      = document.getElementById('set-theme');
+const $maxRows     = document.getElementById('set-max-rows');
+const $theme       = document.getElementById('set-theme');
+const $appearance   = document.getElementById('set-appearance');
+const $showMascot   = document.getElementById('set-show-mascot');
+const $fontSize     = document.getElementById('set-font-size');
 const $yourName   = document.getElementById('set-your-name');
 const $yourLabel  = document.getElementById('set-your-label');
 
@@ -138,6 +151,7 @@ function pillSelect(group, value) {
 }
 
 function pillInit(group, savedValue, onChange) {
+  if (!group) return;
   pillSelect(group, savedValue);
   group.querySelectorAll('.pill').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -148,18 +162,24 @@ function pillInit(group, savedValue, onChange) {
 }
 
 $fullNames.checked = Config.get('fullNames');
+$capsNames.checked = Config.get('capsNames');
 $blurNames.checked = Config.get('blurNames');
 $mergePets.checked = Config.get('mergePets');
-$showJobs.checked  = Config.get('showJobs');
+$showJobs.checked     = Config.get('showJobs');
+$showMascot.checked   = Config.get('showMascot');
 $yourName.value    = Config.get('yourName');
 $yourLabel.value   = Config.get('yourLabel');
-pillInit($maxRows, Config.get('maxRows'), v => { const n = parseInt(v, 10) || 0; Config.set('maxRows', n); applyMaxRows(n); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
-pillInit($theme,   Config.get('theme'),   v => { Config.set('theme', v); applyTheme(v); });
+pillInit($maxRows,    Config.get('maxRows'),    v => { const n = parseInt(v, 10) || 0; Config.set('maxRows', n); applyMaxRows(n); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+pillInit($theme,      Config.get('theme'),      v => { Config.set('theme', v); applyTheme(v); });
+pillInit($appearance, Config.get('appearance'), v => { Config.set('appearance', v); applyAppearance(v); });
+pillInit($fontSize,   Config.get('fontSize'),   v => { Config.set('fontSize', v); applyFontSize(v); });
 
 $fullNames.addEventListener('change', () => { Config.set('fullNames', $fullNames.checked); saveAndRerender(); });
+$capsNames.addEventListener('change', () => { Config.set('capsNames', $capsNames.checked); applyCaps($capsNames.checked); });
 $blurNames.addEventListener('change', () => { Config.set('blurNames', $blurNames.checked); applyBlur($blurNames.checked); });
 $mergePets.addEventListener('change', () => { Config.set('mergePets', $mergePets.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
-$showJobs.addEventListener('change',  () => { Config.set('showJobs', $showJobs.checked);   if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+$showJobs.addEventListener('change',    () => { Config.set('showJobs', $showJobs.checked); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
+$showMascot.addEventListener('change',  () => { Config.set('showMascot', $showMascot.checked); applyMascot($showMascot.checked); });
 
 function saveAndRerender() { if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); }
 $yourName.addEventListener('input',  () => { Config.set('yourName',  $yourName.value.trim());  saveAndRerender(); });

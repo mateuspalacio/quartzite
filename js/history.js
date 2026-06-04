@@ -26,4 +26,4 @@ const History = (() => {
   return { push, getAll };
 })();
 
-export default History;
+// History is a global

@@ -42,10 +42,10 @@ const SPRITE = {
   PCT: '40% 100%',
 };
 
-export function jobSpritePos(job) {
+function jobSpritePos(job) {
   return SPRITE[(job || '').toUpperCase()] || null;
 }
 
-export function hasIcon(job) {
+function hasIcon(job) {
   return (job || '').toUpperCase() in SPRITE;
 }

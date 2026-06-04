@@ -3,15 +3,19 @@
  */
 
 const DEFAULTS = {
-  blurNames:  false,
-  mergePets:  true,
-  showJobs:   true,
-  maxRows:    8,
-  theme:      'dark',
-  mode:       'dps',
-  yourName:   '',      // character name to highlight
-  yourLabel:  'YOU',   // what to display instead
-  fullNames:  false,   // show full "Firstname Lastname" instead of first name only
+  blurNames:   false,
+  mergePets:   true,
+  showJobs:    true,
+  maxRows:     8,
+  theme:       'dark',
+  appearance:  'dynamis',  // 'dynamis' | 'corgi' | 'alexandrian'
+  showMascot:  true,
+  mode:        'dps',
+  yourName:    '',      // character name to highlight
+  yourLabel:   'YOU',   // what to display instead
+  fullNames:   false,   // show full "Firstname Lastname" instead of first name only
+  capsNames:   false,   // display all names in ALL CAPS
+  fontSize:    'md',    // 'sm' | 'md' | 'lg' | 'xl'
 };
 
 const KEY = 'quartzite_settings';
@@ -41,4 +45,4 @@ const Config = (() => {
   return { get, set };
 })();
 
-export default Config;
+// Config is a global

@@ -1,0 +1,118 @@
+/* ── Quartzite Appearances ───────────────────────────────────────────── */
+/* Each [data-appearance] block overrides the CSS custom properties        */
+/* defined in main.css. The base (no attribute) is "Dynamis Crystal".      */
+
+/* ── Mascot toggle ────────────────────────────────────────────────────── */
+.app.hide-mascot::after { display: none !important; }
+
+/* ── Dynamis Crystal (default) ───────────────────────────────────────── */
+/* Uses base :root variables — no overrides needed.                        */
+
+[data-appearance="dynamis"] .app::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 4px;
+  width: 64px;
+  height: 64px;
+  background-image: url('../icons/dynamis-mascot.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Corgi ────────────────────────────────────────────────────────────── */
+[data-appearance="corgi"] {
+  --accent:           #e07b39;
+  --accent-soft:      rgba(224, 123, 57, 0.18);
+  --accent-glow:      rgba(224, 123, 57, 0.35);
+
+  --bg-base:          rgba(42, 26, 12, 0.88);
+  --bg-surface:       rgba(255, 200, 130, 0.07);
+  --bg-surface-hover: rgba(255, 200, 130, 0.13);
+  --bg-panel:         rgba(36, 22, 10, 0.96);
+  --bg-bar:           rgba(255, 200, 130, 0.09);
+
+  --border:           rgba(255, 180, 80, 0.12);
+  --border-strong:    rgba(255, 180, 80, 0.22);
+
+  --text-primary:     rgba(255, 240, 210, 0.95);
+  --text-secondary:   rgba(255, 200, 140, 0.60);
+  --text-tertiary:    rgba(255, 200, 140, 0.32);
+
+  --blur:             blur(20px) saturate(140%);
+  --radius-lg:        22px;
+}
+
+/* Corgi mascot in the bottom-right corner of the app shell */
+[data-appearance="corgi"] .app::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 4px;
+  width: 64px;
+  height: 64px;
+  background-image: url('../icons/corgi.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Alexandrian ──────────────────────────────────────────────────────── */
+/* Palette: Perfect Alexander — steel silver, holy gold, feather white,    */
+/* ethereal green-gold light                                                */
+[data-appearance="alexandrian"] {
+  --accent:           #c8a84b;
+  --accent-soft:      rgba(200, 168, 75, 0.18);
+  --accent-glow:      rgba(200, 168, 75, 0.35);
+
+  --bg-base:          rgba(10, 13, 16, 0.92);
+  --bg-surface:       rgba(160, 175, 190, 0.06);
+  --bg-surface-hover: rgba(160, 175, 190, 0.11);
+  --bg-panel:         rgba(8, 11, 14, 0.97);
+  --bg-bar:           rgba(160, 175, 190, 0.07);
+
+  --border:           rgba(200, 168, 75, 0.15);
+  --border-strong:    rgba(200, 168, 75, 0.28);
+
+  --text-primary:     rgba(230, 235, 240, 0.96);
+  --text-secondary:   rgba(170, 180, 195, 0.70);
+  --text-tertiary:    rgba(120, 135, 150, 0.55);
+
+  --blur:             blur(20px) saturate(120%);
+  --radius-sm:        4px;
+  --radius-md:        6px;
+  --radius-lg:        10px;
+}
+
+/* Alexandrian: gold border */
+[data-appearance="alexandrian"] .app {
+  border-color: rgba(200, 168, 75, 0.35);
+}
+
+[data-appearance="alexandrian"] .app::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 4px;
+  width: 64px;
+  height: 64px;
+  background-image: url('../icons/alexandrian-mascot.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Alexandrian: rank colors — holy gold, steel silver, iron */
+[data-appearance="alexandrian"] .combatant-rank.rank-1 { color: #c8a84b; }
+[data-appearance="alexandrian"] .combatant-rank.rank-2 { color: #a8b8c8; }
+[data-appearance="alexandrian"] .combatant-rank.rank-3 { color: #7a8a96; }

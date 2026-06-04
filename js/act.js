@@ -89,6 +89,17 @@ const ACT = (() => {
     socket.addEventListener('error', () => { /* close fires after */ });
   }
 
+  // ── Legacy ACT DOM events (default OverlayPlugin, no WS server needed) ──
+  function connectLegacyDOM() {
+    console.info('[Quartzite] Using legacy DOM events (onOverlayDataUpdate)');
+    document.addEventListener('onOverlayDataUpdate', e => {
+      emit('CombatData', e.detail);
+    });
+    document.addEventListener('onOverlayStateUpdate', e => {
+      // OverlayPlugin fires this when lock state changes — not needed but harmless
+    });
+  }
+
   // ── Mock data for browser dev ─────────────────────────────────────────
   function connectMock() {
     const players = [
@@ -164,17 +175,22 @@ const ACT = (() => {
   function init() {
     const hasWsParam = /OVERLAY_WS|HOST_PORT/.test(window.location.search);
 
+    // Modern IINACT / new OverlayPlugin API — best option
     if (typeof window.addOverlayListener === 'function') {
       connectModern();
       return;
     }
+    // Explicit WebSocket URL param — use it directly
     if (hasWsParam) {
       connectLegacy();
       return;
     }
 
     // OverlayPlugin may inject addOverlayListener slightly after page load.
-    // Poll every 50ms for up to 2s, then fall back to WebSocket default port.
+    // Poll every 50ms for up to 2s, then fall back in order:
+    //   1. addOverlayListener (modern)
+    //   2. onOverlayDataUpdate DOM events (classic ACT default, no WS server needed)
+    //   3. WebSocket on default port (IINACT without URL param)
     let attempts = 0;
     const poll = setInterval(() => {
       attempts++;
@@ -183,8 +199,9 @@ const ACT = (() => {
         connectModern();
       } else if (attempts >= 40) {
         clearInterval(poll);
-        // Last resort: try WebSocket on the default ACT port
-        console.info('[Quartzite] addOverlayListener not found — trying WebSocket fallback');
+        // Always register DOM event listener — works with classic ACT out of the box
+        connectLegacyDOM();
+        // Also try WebSocket in parallel (covers IINACT default port)
         connectLegacy();
         // connectMock(); // uncomment locally for UI dev
       }
@@ -194,4 +211,4 @@ const ACT = (() => {
   return { init, on, off };
 })();
 
-export default ACT;
+// ACT is a global
