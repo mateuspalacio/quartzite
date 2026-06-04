@@ -65,42 +65,35 @@
 }
 
 /* ── Alexandrian ──────────────────────────────────────────────────────── */
+/* Palette: Perfect Alexander — steel silver, holy gold, feather white,    */
+/* ethereal green-gold light                                                */
 [data-appearance="alexandrian"] {
-  --accent:           #ffffff;
-  --accent-soft:      rgba(255, 255, 255, 0.10);
-  --accent-glow:      rgba(255, 255, 255, 0.15);
+  --accent:           #c8a84b;
+  --accent-soft:      rgba(200, 168, 75, 0.18);
+  --accent-glow:      rgba(200, 168, 75, 0.35);
 
-  --bg-base:          rgba(9, 9, 11, 0.97);
-  --bg-surface:       rgba(255, 255, 255, 0.04);
-  --bg-surface-hover: rgba(255, 255, 255, 0.07);
-  --bg-panel:         rgba(9, 9, 11, 0.99);
-  --bg-bar:           rgba(255, 255, 255, 0.05);
+  --bg-base:          rgba(10, 13, 16, 0.92);
+  --bg-surface:       rgba(160, 175, 190, 0.06);
+  --bg-surface-hover: rgba(160, 175, 190, 0.11);
+  --bg-panel:         rgba(8, 11, 14, 0.97);
+  --bg-bar:           rgba(160, 175, 190, 0.07);
 
-  --border:           rgba(255, 255, 255, 0.10);
-  --border-strong:    rgba(255, 255, 255, 0.16);
+  --border:           rgba(200, 168, 75, 0.15);
+  --border-strong:    rgba(200, 168, 75, 0.28);
 
-  --text-primary:     rgba(250, 250, 250, 0.98);
-  --text-secondary:   rgba(161, 161, 170, 1);
-  --text-tertiary:    rgba(113, 113, 122, 1);
+  --text-primary:     rgba(230, 235, 240, 0.96);
+  --text-secondary:   rgba(170, 180, 195, 0.70);
+  --text-tertiary:    rgba(120, 135, 150, 0.55);
 
-  --blur:             none;
+  --blur:             blur(20px) saturate(120%);
   --radius-sm:        4px;
   --radius-md:        6px;
-  --radius-lg:        8px;
+  --radius-lg:        10px;
 }
 
-/* ShadCN: no frosted glass, solid border */
+/* Alexandrian: gold border */
 [data-appearance="alexandrian"] .app {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border-color: var(--border-strong);
-}
-
-/* ShadCN: flat bars, no gradient softness */
-[data-appearance="alexandrian"] .combatant-bar {
-  opacity: 0.12;
-  background: var(--job-color, var(--accent));
-  border-radius: 0;
+  border-color: rgba(200, 168, 75, 0.35);
 }
 
 [data-appearance="alexandrian"] .app::after {
@@ -119,7 +112,7 @@
   z-index: 0;
 }
 
-/* Alexandrian: rank accent becomes zinc */
-[data-appearance="alexandrian"] .combatant-rank.rank-1 { color: #fafafa; }
-[data-appearance="alexandrian"] .combatant-rank.rank-2 { color: #a1a1aa; }
-[data-appearance="alexandrian"] .combatant-rank.rank-3 { color: #71717a; }
+/* Alexandrian: rank colors — holy gold, steel silver, iron */
+[data-appearance="alexandrian"] .combatant-rank.rank-1 { color: #c8a84b; }
+[data-appearance="alexandrian"] .combatant-rank.rank-2 { color: #a8b8c8; }
+[data-appearance="alexandrian"] .combatant-rank.rank-3 { color: #7a8a96; }
