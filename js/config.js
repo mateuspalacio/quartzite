@@ -14,6 +14,7 @@ const DEFAULTS = {
   yourName:    '',      // character name to highlight
   yourLabel:   'YOU',   // what to display instead
   fullNames:   false,   // show full "Firstname Lastname" instead of first name only
+  capsNames:   false,   // display all names in ALL CAPS
 };
 
 const KEY = 'quartzite_settings';
