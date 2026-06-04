@@ -454,6 +454,11 @@ body {
   pointer-events: none;
 }
 
+.caps-names .combatant-name {
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+}
+
 /* Stats cluster */
 .combatant-stats {
   position: relative;
