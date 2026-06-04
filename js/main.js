@@ -65,6 +65,7 @@ applyTheme(Config.get('theme'));
 applyAppearance(Config.get('appearance'));
 applyMascot(Config.get('showMascot'));
 applyCaps(Config.get('capsNames'));
+applyFontSize(Config.get('fontSize'));
 applyBlur(Config.get('blurNames'));
 applyMaxRows(Config.get('maxRows'));
 
@@ -72,6 +73,7 @@ function applyTheme(t)       { document.documentElement.setAttribute('data-theme
 function applyAppearance(a)  { document.documentElement.setAttribute('data-appearance', a); }
 function applyMascot(v)      { $app.classList.toggle('hide-mascot', !v); }
 function applyCaps(v)        { $app.classList.toggle('caps-names', v); }
+function applyFontSize(v)    { document.documentElement.setAttribute('data-fontsize', v); }
 function applyBlur(v)        { $app.classList.toggle('blur-names', v); }
 function applyMaxRows(n)    { $list.style.setProperty('--max-rows', n || 8); }
 
@@ -137,6 +139,7 @@ const $maxRows     = document.getElementById('set-max-rows');
 const $theme       = document.getElementById('set-theme');
 const $appearance   = document.getElementById('set-appearance');
 const $showMascot   = document.getElementById('set-show-mascot');
+const $fontSize     = document.getElementById('set-font-size');
 const $yourName   = document.getElementById('set-your-name');
 const $yourLabel  = document.getElementById('set-your-label');
 
@@ -169,6 +172,7 @@ $yourLabel.value   = Config.get('yourLabel');
 pillInit($maxRows,    Config.get('maxRows'),    v => { const n = parseInt(v, 10) || 0; Config.set('maxRows', n); applyMaxRows(n); if (lastData) renderCombatants(lastData.Encounter, lastData.Combatant); });
 pillInit($theme,      Config.get('theme'),      v => { Config.set('theme', v); applyTheme(v); });
 pillInit($appearance, Config.get('appearance'), v => { Config.set('appearance', v); applyAppearance(v); });
+pillInit($fontSize,   Config.get('fontSize'),   v => { Config.set('fontSize', v); applyFontSize(v); });
 
 $fullNames.addEventListener('change', () => { Config.set('fullNames', $fullNames.checked); saveAndRerender(); });
 $capsNames.addEventListener('change', () => { Config.set('capsNames', $capsNames.checked); applyCaps($capsNames.checked); });
