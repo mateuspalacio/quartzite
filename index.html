@@ -30,6 +30,11 @@
           <span class="encounter-stat-label">rHPS</span>
         </div>
       </div>
+      <nav class="mode-tabs" id="mode-tabs">
+        <button class="tab active" data-mode="dps">DMG</button>
+        <button class="tab" data-mode="hps">HPS</button>
+        <button class="tab" data-mode="tank">TNK</button>
+      </nav>
       <div class="header-controls">
         <button class="icon-btn" id="btn-history" title="History" aria-label="Browse encounter history">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -45,13 +50,6 @@
         </button>
       </div>
     </header>
-
-    <!-- Mode Tabs -->
-    <nav class="mode-tabs" id="mode-tabs">
-      <button class="tab active" data-mode="dps">DMG</button>
-      <button class="tab" data-mode="hps">HPS</button>
-      <button class="tab" data-mode="tank">TANK</button>
-    </nav>
 
     <!-- Combatant Table -->
     <main class="combatant-list" id="combatant-list">
