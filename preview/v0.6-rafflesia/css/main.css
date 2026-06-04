@@ -779,6 +779,30 @@ body {
   animation: headerPulse 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* ── Font size scales ─────────────────────────────────────────────────── */
+[data-fontsize="sm"] { font-size: 11px; --row-height: 30px; }
+[data-fontsize="sm"] .combatant-name    { font-size: 10px; }
+[data-fontsize="sm"] .combatant-primary { font-size: 10.5px; min-width: 58px; }
+[data-fontsize="sm"] .combatant-pct     { font-size: 9px; }
+[data-fontsize="sm"] .combatant-secondary { font-size: 8.5px; }
+[data-fontsize="sm"] .encounter-stat-value { font-size: 12px; }
+
+[data-fontsize="md"] { font-size: 13px; --row-height: 36px; } /* default */
+
+[data-fontsize="lg"] { font-size: 15px; --row-height: 42px; }
+[data-fontsize="lg"] .combatant-name    { font-size: 14px; }
+[data-fontsize="lg"] .combatant-primary { font-size: 14.5px; min-width: 84px; }
+[data-fontsize="lg"] .combatant-pct     { font-size: 12px; }
+[data-fontsize="lg"] .combatant-secondary { font-size: 11px; }
+[data-fontsize="lg"] .encounter-stat-value { font-size: 16px; }
+
+[data-fontsize="xl"] { font-size: 17px; --row-height: 48px; }
+[data-fontsize="xl"] .combatant-name    { font-size: 16px; }
+[data-fontsize="xl"] .combatant-primary { font-size: 16.5px; min-width: 96px; }
+[data-fontsize="xl"] .combatant-pct     { font-size: 13.5px; }
+[data-fontsize="xl"] .combatant-secondary { font-size: 12px; }
+[data-fontsize="xl"] .encounter-stat-value { font-size: 18px; }
+
 /* ── Responsive width ─────────────────────────────────────────────────── */
 @media (max-width: 320px) {
   .combatant-pct { display: none; }
