@@ -2,6 +2,10 @@
 
 A frosted glass ACT / IINACT overlay for FFXIV — clean DPS meter with multiple appearance themes.
 
+| Dynamis Crystal | Corgi | Alexandrian |
+|:---:|:---:|:---:|
+| ![Dynamis Crystal](dynamis.png) | ![Corgi](corgi.png) | ![Alexandrian](alexander.png) |
+
 ## Features
 
 - **Frosted glass UI** — Dynamis Crystal, Corgi, and Alexandrian themes
