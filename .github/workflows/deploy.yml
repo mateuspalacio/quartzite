@@ -3,32 +3,32 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - main
       - 'v*'
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Determine deploy path
-        id: path
-        run: |
-          if [ "${{ github.ref_name }}" = "master" ]; then
-            echo "dest=." >> $GITHUB_OUTPUT
-          else
-            echo "dest=preview/${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          fi
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          destination_dir: ${{ steps.path.outputs.dest }}
-          exclude_assets: '.github,.git,CLAUDE.md'
-          keep_files: true
+        id: deployment
+        uses: actions/deploy-pages@v4
