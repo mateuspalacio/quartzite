@@ -68,7 +68,7 @@ Only players with a job in the `PLAYER_JOBS` set AND `damage > 0 || healed > 0` 
 
 ## Versioning
 
-**Current version: v0.6 "Rafflesia" (beta)** — branch `v0.6-rafflesia`
+**Current version: v0.7 "Nael" (beta)** — branch `v0.7-nael`
 
 The version is displayed in the Settings panel (`index.html`) and in the empty-state changelog (`js/main.js` → `CHANGELOG`).
 

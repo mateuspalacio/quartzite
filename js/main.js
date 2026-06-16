@@ -1,5 +1,12 @@
 // ── Changelog ─────────────────────────────────────────────────────────────
 const CHANGELOG = [
+  { version: 'v0.7 "Nael"', date: '2026-06-16', notes: [
+    'Limit Break damage/healing now shown (LB row)',
+    'New appearances: Carbuncle and Lahabrea',
+    'Light theme now works in every appearance',
+    'Brighter timer and header labels',
+    'Renamed crit-direct-hit label from "!!!" to "CDH"',
+  ]},
   { version: 'v0.6 "Rafflesia"', date: '2025-06-03', notes: [
     'Appearance system: Dynamis Crystal, Corgi, Alexandrian',
     'Works over file:// (no local server needed)',
