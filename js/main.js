@@ -7,18 +7,9 @@ const CHANGELOG = [
     'Brighter timer and header labels',
     'Renamed crit-direct-hit label from "!!!" to "CDH"',
   ]},
-  { version: 'v0.6 "Rafflesia"', date: '2025-06-03', notes: [
-    'Appearance system: Dynamis Crystal, Corgi, Alexandrian',
-    'Works over file:// (no local server needed)',
-    'Settings dropdowns replaced with pill buttons (fixes ACT flicker)',
-    'Version history shown on waiting screen',
-  ]},
-  { version: 'v0.5 "Twintania"', date: '2025-06-03', notes: [
-    'Kagerou sprite sheet for all job icons (consistent gold style)',
-    'Boss name shown alongside zone in header',
-    'Robust ACT connection polling (no more mock data in overlay)',
-    'Filter out zero-damage/NPC combatants',
-  ]},
+  // Older releases are collapsed to name + date only.
+  { version: 'v0.6 "Rafflesia"', date: '2025-06-03', notes: [] },
+  { version: 'v0.5 "Twintania"', date: '2025-06-03', notes: [] },
 ];
 
 // ── DOM refs ──────────────────────────────────────────────────────────────
@@ -313,9 +304,9 @@ function renderEmptyState() {
               <span class="changelog-ver">${entry.version}</span>
               <span class="changelog-date">${entry.date}</span>
             </div>
-            <ul class="changelog-notes">
+            ${entry.notes.length ? `<ul class="changelog-notes">
               ${entry.notes.map(n => `<li>${n}</li>`).join('')}
-            </ul>
+            </ul>` : ''}
           </div>
         `).join('')}
       </div>
