@@ -212,6 +212,7 @@ function critStats(c) {
 }
 
 function critHtml(c) {
+  if (c.name === 'Limit Break') return '';
   const s = critStats(c);
   return `<span class="cs-ch">${s.ch}</span><span class="cs-dh">${s.dh}</span><span class="cs-cdh">${s.cdh}</span>`;
 }
@@ -246,26 +247,30 @@ function buildRow(c, rank, maxVal) {
   const dmgPct   = fmtPct(c['damage%'] || '0%');
   const job      = (c.Job || 'DEFAULT').toUpperCase();
   const showJobs = Config.get('showJobs');
+  const isLB     = c.name === 'Limit Break';
 
   // "You" highlighting — ACT literal "YOU", or match configured name
   const yourName  = Config.get('yourName').toLowerCase();
   const yourLabel = Config.get('yourLabel') || 'YOU';
-  const isYou     = c.name === 'YOU' || (yourName && (
+  const isYou     = !isLB && (c.name === 'YOU' || (yourName && (
     c.name.toLowerCase() === yourName ||
     firstName(c.name).toLowerCase() === yourName
-  ));
-  const displayName = isYou ? yourLabel : (Config.get('fullNames') ? c.name : firstName(c.name));
+  )));
+  const displayName = isLB ? 'Limit Break'
+    : isYou ? yourLabel
+    : (Config.get('fullNames') ? c.name : firstName(c.name));
 
   const row = document.createElement('div');
-  row.className = `combatant-row job-${job}${isYou ? ' is-you' : ''}`;
+  row.className = `combatant-row job-${job}${isYou ? ' is-you' : ''}${isLB ? ' is-lb' : ''}`;
   row.setAttribute('data-name', c.name);
   // Bar starts at 0; double-rAF lets the element paint before transitioning
   row.style.setProperty('--bar-pct', '0%');
 
   const spritePos = jobSpritePos(job);
-  const iconHtml = showJobs && spritePos
-    ? `<div class="combatant-job" title="${job}" style="background-position:${spritePos}"></div>`
-    : (showJobs ? `<div class="combatant-job combatant-job--unknown" title="${job}"></div>` : '');
+  const iconHtml = !showJobs ? ''
+    : isLB ? `<div class="combatant-job combatant-job--lb" title="Limit Break">LB</div>`
+    : spritePos ? `<div class="combatant-job" title="${job}" style="background-position:${spritePos}"></div>`
+    : `<div class="combatant-job combatant-job--unknown" title="${job}"></div>`;
 
   row.innerHTML = `
     <div class="combatant-bar"></div>
@@ -323,11 +328,14 @@ function renderCombatants(rawEncounter, rawCombatants) {
     'BRD','ARC','MCH','DNC',
     'BLM','THM','SMN','ACN','RDM','PCT','BLU',
   ]);
-  let players = Object.values(combatants).filter(c =>
-    !!c.name &&
-    PLAYER_JOBS.has((c.Job || '').toUpperCase()) &&
-    (parseFloat(c.damage) > 0 || parseFloat(c.healed) > 0)
-  );
+  let players = Object.values(combatants).filter(c => {
+    if (!c.name) return false;
+    // Limit Break is a jobless pseudo-combatant — show it whenever it has a
+    // relevant stat for the current mode (sortKey is mode-aware). Same as Kagerou.
+    if (c.name === 'Limit Break') return sortKey(c) > 0;
+    return PLAYER_JOBS.has((c.Job || '').toUpperCase()) &&
+      (parseFloat(c.damage) > 0 || parseFloat(c.healed) > 0);
+  });
   players.sort((a, b) => sortKey(b) - sortKey(a));
   if (maxRows) players = players.slice(0, maxRows);
 
@@ -346,16 +354,19 @@ function renderCombatants(rawEncounter, rawCombatants) {
     if (existing[c.name]) {
       // Update in-place — no DOM move, no animation replay
       const row = existing[c.name];
+      const isLB      = c.name === 'Limit Break';
       const yourName  = Config.get('yourName').toLowerCase();
       const yourLabel = Config.get('yourLabel') || 'YOU';
-      const isYou     = c.name === 'YOU' || (yourName && (
+      const isYou     = !isLB && (c.name === 'YOU' || (yourName && (
         c.name.toLowerCase() === yourName ||
         firstName(c.name).toLowerCase() === yourName
-      ));
+      )));
       row.classList.toggle('is-you', isYou);
       row.style.order = i;
       row.style.setProperty('--bar-pct', `${newPct}%`);
-      row.querySelector('.combatant-name').textContent = isYou ? yourLabel : (Config.get('fullNames') ? c.name : firstName(c.name));
+      row.querySelector('.combatant-name').textContent = isLB ? 'Limit Break'
+        : isYou ? yourLabel
+        : (Config.get('fullNames') ? c.name : firstName(c.name));
       row.querySelector('.combatant-primary').textContent = primaryStat(c);
       row.querySelector('.combatant-pct').textContent = fmtPct(c['damage%'] || '0%');
       row.querySelector('.combatant-secondary').innerHTML = critHtml(c);
