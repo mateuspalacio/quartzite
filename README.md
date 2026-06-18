@@ -11,7 +11,7 @@ A frosted glass ACT / IINACT overlay for FFXIV — clean DPS meter with multiple
 - **Frosted glass UI** — Dynamis Crystal, Corgi, and Alexandrian themes
 - **Dark / Light** — per-theme colour modes
 - **DPS · HPS · Tank modes** — switch mid-pull
-- **CH / DH / !!!** — crit, direct-hit, and crit-direct rates per player
+- **CH / DH / CDH** — crit, direct-hit, and crit-direct rates per player
 - **"You" highlight** — your row shows in accent colour with a custom label
 - **Encounter history** — browse your last 5 pulls
 - **Pet merging** — SMN/SCH pet damage rolls up to the owner
